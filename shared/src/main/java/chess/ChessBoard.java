@@ -25,6 +25,11 @@ public class ChessBoard {
         board.put(position, piece);
     }
 
+    public void removePiece(ChessPosition position, ChessPiece piece)
+    {
+        board.remove(position, piece);
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *
