@@ -57,10 +57,36 @@ public class ChessPiece {
 
         switch(type){
             case KING:
-
+                validMoves.addAll(getKingMoves(board, myPosition));
                 break;
         }
 
+        return validMoves;
+    }
+
+    private Collection<ChessMove> getKingMoves (ChessBoard board, ChessPosition myPositions)
+    {
+        Collection<ChessMove> validMoves = new HashSet<>();
+
+        int[] rowPositions = {-1,-1,-1,0,0,1,1,1};
+        int[] colPositions = {-1,0,1,-1,1,-1,0,1};
+
+        for(int i = 0; i < rowPositions.length; i++)
+        {
+            int newRowPos = myPositions.getRow() + rowPositions[i];
+            int newColPos = myPositions.getColumn()+colPositions[i];
+
+            if(newRowPos >= 1 & newRowPos <=8 & newColPos >= 1 & newColPos <=8 ) {
+                ChessPosition newPos = new ChessPosition(newRowPos, newColPos);
+
+                ChessPiece checkForPiece = board.getPiece(newPos);
+
+                if(checkForPiece == null || checkForPiece.getTeamColor()!=getTeamColor())
+                {
+                    validMoves.add(new ChessMove(myPositions, newPos, null));
+                }
+            }
+        }
         return validMoves;
     }
 }
