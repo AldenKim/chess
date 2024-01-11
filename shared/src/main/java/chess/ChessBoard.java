@@ -1,6 +1,9 @@
 package chess;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -22,7 +25,15 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
+        System.out.println(piece.getPieceType());
+        System.out.println(position);
         board.put(position, piece);
+
+        System.out.println("Current board state:");
+        for (ChessPosition key : board.keySet()) {
+            ChessPiece currentPiece = board.get(key);
+            System.out.println("Position: " + key + ", Piece: " + currentPiece.getPieceType());
+        }
     }
 
     public void removePiece(ChessPosition position, ChessPiece piece)
@@ -38,7 +49,16 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board.get(position);
+        System.out.println(position);
+        ChessPiece current = board.get(position);
+        for (ChessPosition key : board.keySet()) {
+            if (position.getRow() == key.getRow() && position.getColumn() == key.getColumn())
+            {
+                current = board.get(key);
+                break;
+            }
+        }
+        return current;
     }
 
     /**
