@@ -179,6 +179,11 @@ public class ChessPiece {
     {
         Collection<ChessMove> validMoves = new HashSet<>();
 
+        //Queen moves like a bishop
+        validMoves.addAll(getBishopMoves(board,myPosition));
+        //Queen also moves like a rook
+        validMoves.addAll(getRookMoves(board,myPosition));
+
         return validMoves;
     }
 }
