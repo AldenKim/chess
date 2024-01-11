@@ -60,7 +60,10 @@ public class ChessPiece {
                 validMoves.addAll(getKingMoves(board, myPosition));
                 break;
             case BISHOP:
-                validMoves.addAll(getBishopMoves(board,myPosition));
+                validMoves.addAll(getBishopMoves(board, myPosition));
+                break;
+            case ROOK:
+                validMoves.addAll(getRookMoves(board, myPosition));
                 break;
         }
 
@@ -126,6 +129,13 @@ public class ChessPiece {
                 }
             }
         }
+        return validMoves;
+    }
+
+    private Collection<ChessMove> getRookMoves (ChessBoard board, ChessPosition myPosition)
+    {
+        Collection<ChessMove> validMoves = new HashSet<>();
+
         return validMoves;
     }
 }
