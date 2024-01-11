@@ -67,15 +67,15 @@ public class ChessPiece {
         return validMoves;
     }
 
-    private Collection<ChessMove> getKingMoves (ChessBoard board, ChessPosition myPositions) {
+    private Collection<ChessMove> getKingMoves (ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new HashSet<>();
 
         int[] rowPositions = {-1, -1, -1, 0, 0, 1, 1, 1};
         int[] colPositions = {-1, 0, 1, -1, 1, -1, 0, 1};
 
         for (int i = 0; i < rowPositions.length; i++) {
-            int newRowPos = myPositions.getRow() + rowPositions[i];
-            int newColPos = myPositions.getColumn() + colPositions[i];
+            int newRowPos = myPosition.getRow() + rowPositions[i];
+            int newColPos = myPosition.getColumn() + colPositions[i];
 
             if (newRowPos >= 1 && newRowPos <= 8 && newColPos >= 1 && newColPos <= 8) {
                 ChessPosition newPos = new ChessPosition(newRowPos, newColPos);
@@ -83,7 +83,7 @@ public class ChessPiece {
                 ChessPiece checkForPiece = board.getPiece(newPos);
 
                 if (checkForPiece == null || checkForPiece.getTeamColor() != getTeamColor()) {
-                    validMoves.add(new ChessMove(myPositions, newPos, null));
+                    validMoves.add(new ChessMove(myPosition, newPos, null));
                 }
             }
         }
