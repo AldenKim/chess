@@ -25,15 +25,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        System.out.println(piece.getPieceType());
-        System.out.println(position);
         board.put(position, piece);
-
-        System.out.println("Current board state:");
-        for (ChessPosition key : board.keySet()) {
-            ChessPiece currentPiece = board.get(key);
-            System.out.println("Position: " + key + ", Piece: " + currentPiece.getPieceType());
-        }
     }
 
     public void removePiece(ChessPosition position, ChessPiece piece)
@@ -49,7 +41,6 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        System.out.println(position);
         ChessPiece current = board.get(position);
         for (ChessPosition key : board.keySet()) {
             if (position.getRow() == key.getRow() && position.getColumn() == key.getColumn())
