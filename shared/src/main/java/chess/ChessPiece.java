@@ -93,7 +93,39 @@ public class ChessPiece {
     private Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition myPosition)
     {
         Collection<ChessMove> validMoves = new HashSet<>();
+        int[] rowMoves = {-1,-1,1,1};
+        int[] colMoves = {-1,1,-1,1};
 
+        for(int i = 0; i < rowMoves.length; i++)
+        {
+            int newRowPos = myPosition.getRow();
+            int newColPos = myPosition.getColumn();
+
+            while (true)
+            {
+                newRowPos+=rowMoves[i];
+                newColPos+=colMoves[i];
+
+                if(newRowPos < 1 || newRowPos > 8 || newColPos < 1 || newColPos > 8)
+                {
+                    break;
+                }
+
+                ChessPosition newPos = new ChessPosition(newRowPos,newColPos);
+                ChessPiece checkForPiece = board.getPiece(newPos);
+                if(checkForPiece == null)
+                {
+                    validMoves.add(new ChessMove(myPosition, newPos, null));
+                }
+                else{
+                    if(checkForPiece.getTeamColor() != getTeamColor())
+                    {
+                        validMoves.add(new ChessMove(myPosition, newPos, null));
+                    }
+                    break;
+                }
+            }
+        }
         return validMoves;
     }
 }
