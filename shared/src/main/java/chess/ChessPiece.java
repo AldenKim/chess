@@ -52,7 +52,8 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
+    {
         Collection<ChessMove> validMoves = new HashSet<>();
 
         switch(type){
@@ -73,7 +74,8 @@ public class ChessPiece {
         return validMoves;
     }
 
-    private Collection<ChessMove> getKingMoves (ChessBoard board, ChessPosition myPosition) {
+    private Collection<ChessMove> getKingMoves (ChessBoard board, ChessPosition myPosition)
+    {
         Collection<ChessMove> validMoves = new HashSet<>();
 
         int[] rowPositions = {-1, -1, -1, 0, 0, 1, 1, 1};
