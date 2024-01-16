@@ -222,6 +222,33 @@ public class ChessPiece {
     {
         Collection<ChessMove> validMoves = new HashSet<>();
 
+        int direction;
+        int initialRowPos;
+
+        if(getTeamColor() == ChessGame.TeamColor.WHITE)
+        {
+            direction = 1;
+            initialRowPos = 2;
+        }
+        else
+        {
+            direction = -1;
+            initialRowPos = 7;
+        }
+
+        //Pawn starting moves
+        if(myPosition.getRow() == initialRowPos)
+        {
+            ChessPosition doubleMovePos = new ChessPosition(myPosition.getRow() + 2 * direction, myPosition.getColumn());
+            ChessPosition singleMovePos = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn());
+            if(board.getPiece(doubleMovePos) == null && board.getPiece(new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn())) == null)
+            {
+                validMoves.add(new ChessMove(myPosition, doubleMovePos, null));
+                validMoves.add(new ChessMove(myPosition, singleMovePos, null));
+            }
+        }
+
+
         return validMoves;
     }
 }
