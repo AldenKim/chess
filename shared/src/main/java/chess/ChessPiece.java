@@ -248,11 +248,30 @@ public class ChessPiece {
 
         //Single move
         ChessPosition singleMovePos = new ChessPosition(myPosition.getRow()+direction, myPosition.getColumn());
-        if(board.getPiece(singleMovePos) == null)
+        if(board.getPiece(singleMovePos) == null && (singleMovePos.getRow() == 8 || singleMovePos.getRow() == 1))
+        {
+            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.QUEEN));
+            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.BISHOP));
+            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.ROOK));
+            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.KNIGHT));
+        }
+        else if (board.getPiece(singleMovePos) == null)
         {
             validMoves.add(new ChessMove(myPosition,singleMovePos,null));
         }
 
+        //Capturing
+        int[] colMoves = {-1,1};
+        for(int colMove : colMoves)
+        {
+            ChessPosition newPos = new ChessPosition(myPosition.getRow()+direction, myPosition.getColumn()+colMove);
+            ChessPiece checkForPiece = board.getPiece(newPos);
+
+            if(checkForPiece != null && checkForPiece.getTeamColor() != getTeamColor())
+            {
+                validMoves.add(new ChessMove(myPosition, newPos, null));
+            }
+        }
 
         return validMoves;
     }
