@@ -236,16 +236,21 @@ public class ChessPiece {
             initialRowPos = 7;
         }
 
-        //Pawn starting moves
+        //Pawn starting move
         if(myPosition.getRow() == initialRowPos)
         {
             ChessPosition doubleMovePos = new ChessPosition(myPosition.getRow() + 2 * direction, myPosition.getColumn());
-            ChessPosition singleMovePos = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn());
             if(board.getPiece(doubleMovePos) == null && board.getPiece(new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn())) == null)
             {
                 validMoves.add(new ChessMove(myPosition, doubleMovePos, null));
-                validMoves.add(new ChessMove(myPosition, singleMovePos, null));
             }
+        }
+
+        //Single move
+        ChessPosition singleMovePos = new ChessPosition(myPosition.getRow()+direction, myPosition.getColumn());
+        if(board.getPiece(singleMovePos) == null)
+        {
+            validMoves.add(new ChessMove(myPosition,singleMovePos,null));
         }
 
 
