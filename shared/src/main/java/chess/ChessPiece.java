@@ -250,10 +250,10 @@ public class ChessPiece {
         ChessPosition singleMovePos = new ChessPosition(myPosition.getRow()+direction, myPosition.getColumn());
         if(board.getPiece(singleMovePos) == null && (singleMovePos.getRow() == 8 || singleMovePos.getRow() == 1))
         {
-            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.QUEEN));
-            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.BISHOP));
-            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.ROOK));
-            validMoves.add(new ChessMove(myPosition,singleMovePos, PieceType.KNIGHT));
+            validMoves.add(new ChessMove(myPosition, singleMovePos, PieceType.QUEEN));
+            validMoves.add(new ChessMove(myPosition, singleMovePos, PieceType.BISHOP));
+            validMoves.add(new ChessMove(myPosition, singleMovePos, PieceType.ROOK));
+            validMoves.add(new ChessMove(myPosition, singleMovePos, PieceType.KNIGHT));
         }
         else if (board.getPiece(singleMovePos) == null)
         {
