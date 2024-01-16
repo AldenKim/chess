@@ -267,12 +267,18 @@ public class ChessPiece {
             ChessPosition newPos = new ChessPosition(myPosition.getRow()+direction, myPosition.getColumn()+colMove);
             ChessPiece checkForPiece = board.getPiece(newPos);
 
-            if(checkForPiece != null && checkForPiece.getTeamColor() != getTeamColor())
+            if(checkForPiece != null && checkForPiece.getTeamColor() != getTeamColor() && (newPos.getRow() == 8 || newPos.getRow() == 1))
+            {
+                validMoves.add(new ChessMove(myPosition, newPos, PieceType.QUEEN));
+                validMoves.add(new ChessMove(myPosition, newPos, PieceType.BISHOP));
+                validMoves.add(new ChessMove(myPosition, newPos, PieceType.ROOK));
+                validMoves.add(new ChessMove(myPosition, newPos, PieceType.KNIGHT));
+            }
+            else if (checkForPiece != null && checkForPiece.getTeamColor() != getTeamColor())
             {
                 validMoves.add(new ChessMove(myPosition, newPos, null));
             }
         }
-
         return validMoves;
     }
 }
