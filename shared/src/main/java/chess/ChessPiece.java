@@ -76,7 +76,6 @@ public class ChessPiece {
                 validMoves.addAll(getPawnMoves(board,myPosition));
                 break;
         }
-
         return validMoves;
     }
 
