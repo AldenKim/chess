@@ -55,7 +55,6 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
         Collection<ChessMove> validMoves = new HashSet<>();
-
         switch(type){
             case KING:
                 validMoves.addAll(getKingMoves(board, myPosition));
