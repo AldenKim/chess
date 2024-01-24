@@ -76,7 +76,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingpos;
+
+        return false;
     }
 
     /**
@@ -116,5 +118,10 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         throw new RuntimeException("Not implemented");
+    }
+
+    private ChessPosition findKingPosition(TeamColor teamColor)
+    {
+        return null;
     }
 }
