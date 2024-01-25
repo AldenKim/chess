@@ -182,7 +182,7 @@ public class ChessGame {
             for(int col = 1; col < 9; col++)
             {
                 ChessPiece getPiece = chessBoard.getPiece(new ChessPosition(row, col));
-                if (getPiece != null && getPiece.getTeamColor() == teamColor && getPiece.getPieceType() == ChessPiece.PieceType.KNIGHT)
+                if (getPiece != null && getPiece.getTeamColor() == teamColor && getPiece.getPieceType() == ChessPiece.PieceType.KING)
                 {
                     return new ChessPosition(row,col);
                 }
