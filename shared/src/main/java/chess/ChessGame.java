@@ -66,7 +66,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+
     }
 
     /**
@@ -115,7 +115,7 @@ public class ChessGame {
 
         for(int row = 1; row < 9; row++)
         {
-            for(int col = 1; col < 9; col++)
+            for (int col = 1; col < 9; col++)
             {
                 ChessPiece getPiece = chessBoard.getPiece(new ChessPosition(row, col));
                 if(getPiece != null && getPiece.getTeamColor() == teamColor)
@@ -139,6 +139,11 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        if(isInCheck(teamColor))
+        {
+            return false;
+        }
+
         for(int row = 1; row < 9; row++)
         {
             for (int col = 1; col < 9; col++)
@@ -149,12 +154,12 @@ public class ChessGame {
                     Collection<ChessMove> getMoves = getPiece.pieceMoves(chessBoard, new ChessPosition(row, col));
                     if(getMoves != null && !getMoves.isEmpty())
                     {
-                        return true;
+                        return false;
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
