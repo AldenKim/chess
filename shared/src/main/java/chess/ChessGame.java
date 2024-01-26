@@ -175,7 +175,7 @@ public class ChessGame {
                 ChessPiece getPiece = chessBoard.getPiece(new ChessPosition(row, col));
                 if(getPiece != null && getPiece.getTeamColor() == teamColor)
                 {
-                    Collection<ChessMove> getMoves = getPiece.pieceMoves(chessBoard, new ChessPosition(row, col));
+                    Collection<ChessMove> getMoves = validMoves(new ChessPosition(row, col));
                     if(getMoves != null && !getMoves.isEmpty())
                     {
                         return false;
