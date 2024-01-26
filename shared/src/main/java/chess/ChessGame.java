@@ -106,8 +106,15 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
 
-        chessBoard.addPiece(end, piece);
-        chessBoard.removePiece(start, piece);
+        if(move.getPromotionPiece() == null) {
+            chessBoard.addPiece(end, piece);
+            chessBoard.removePiece(start, piece);
+        }
+        else if (move.getPromotionPiece() == ChessPiece.PieceType.QUEEN || move.getPromotionPiece() == ChessPiece.PieceType.KNIGHT || move.getPromotionPiece() == ChessPiece.PieceType. BISHOP|| move.getPromotionPiece() == ChessPiece.PieceType.ROOK)
+        {
+            chessBoard.addPiece(end, new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+            chessBoard.removePiece(start, piece);
+        }
 
         turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
