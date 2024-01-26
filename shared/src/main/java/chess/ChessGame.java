@@ -62,7 +62,24 @@ public class ChessGame {
 
         for(ChessMove move : allMoves)
         {
+            ChessPosition start = move.getStartPosition();
+            ChessPosition end = move.getEndPosition();
+            ChessPiece checkForPiece = chessBoard.getPiece(end);
 
+            chessBoard.addPiece(end, piece);
+            chessBoard.removePiece(start, piece);
+
+            if(!isInCheck(piece.getTeamColor()))
+            {
+                validMoves.add(move);
+            }
+            chessBoard.addPiece(start, piece);
+            chessBoard.removePiece(end, piece);
+
+            if(checkForPiece != null)
+            {
+                chessBoard.addPiece(end, checkForPiece);
+            }
         }
         return validMoves;
     }
@@ -98,7 +115,7 @@ public class ChessGame {
                 if(getPiece != null && getPiece.getTeamColor() != teamColor)
                 {
                     Collection<ChessMove> getMoves = getPiece.pieceMoves(chessBoard, new ChessPosition(row, col));
-                    if(getMoves != null && getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, null)))
+                    if(getMoves != null && (getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, null)) || getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, ChessPiece.PieceType.QUEEN))))
                     {
                         return true;
                     }
@@ -127,7 +144,7 @@ public class ChessGame {
                 ChessPiece getPiece = chessBoard.getPiece(new ChessPosition(row, col));
                 if(getPiece != null && getPiece.getTeamColor() == teamColor)
                 {
-                    Collection<ChessMove> getMoves = getPiece.pieceMoves(chessBoard, new ChessPosition(row, col));
+                    Collection<ChessMove> getMoves = validMoves(new ChessPosition(row, col));
                     if(getMoves != null && !getMoves.isEmpty())
                     {
                         return false;
