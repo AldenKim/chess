@@ -92,6 +92,9 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = chessBoard.getPiece(move.getStartPosition());
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+
         if(piece.getTeamColor() != turn)
         {
             throw new InvalidMoveException("Incorrect team turn");
@@ -102,9 +105,6 @@ public class ChessGame {
         {
             throw new InvalidMoveException("Illegal move given");
         }
-
-        ChessPosition start = move.getStartPosition();
-        ChessPosition end = move.getEndPosition();
 
         if(move.getPromotionPiece() == null) {
             chessBoard.addPiece(end, piece);

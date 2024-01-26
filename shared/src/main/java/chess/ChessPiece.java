@@ -264,6 +264,10 @@ public class ChessPiece {
         for(int colMove : colMoves)
         {
             ChessPosition newPos = new ChessPosition(myPosition.getRow()+direction, myPosition.getColumn()+colMove);
+            if(myPosition.getColumn()+colMove < 1 || myPosition.getColumn()+colMove > 8)
+            {
+                continue;
+            }
             ChessPiece checkForPiece = board.getPiece(newPos);
 
             if(checkForPiece != null && checkForPiece.getTeamColor() != getTeamColor() && (newPos.getRow() == 8 || newPos.getRow() == 1))
