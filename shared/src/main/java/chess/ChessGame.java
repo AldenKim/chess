@@ -91,6 +91,10 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if(chessBoard.getPiece(move.getStartPosition()).getTeamColor() != turn)
+        {
+            throw new InvalidMoveException("Incorrect team turn");
+        }
     }
 
     /**
