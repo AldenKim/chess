@@ -91,7 +91,8 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if(chessBoard.getPiece(move.getStartPosition()).getTeamColor() != turn)
+        ChessPiece piece = chessBoard.getPiece(move.getStartPosition());
+        if(piece.getTeamColor() != turn)
         {
             throw new InvalidMoveException("Incorrect team turn");
         }
@@ -101,6 +102,14 @@ public class ChessGame {
         {
             throw new InvalidMoveException("Illegal move given");
         }
+
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+
+        chessBoard.addPiece(end, piece);
+        chessBoard.removePiece(start, piece);
+
+        turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
     /**
