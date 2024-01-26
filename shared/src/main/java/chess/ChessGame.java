@@ -95,6 +95,12 @@ public class ChessGame {
         {
             throw new InvalidMoveException("Incorrect team turn");
         }
+
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        if(!validMoves.contains(move))
+        {
+            throw new InvalidMoveException("Illegal move given");
+        }
     }
 
     /**
