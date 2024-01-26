@@ -115,6 +115,7 @@ public class ChessGame {
             chessBoard.addPiece(end, new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
             chessBoard.removePiece(start, piece);
         }
+        piece.setMoved();
 
         turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
@@ -244,5 +245,21 @@ public class ChessGame {
             }
         }
         return null;
+    }
+
+    private boolean canCastle(TeamColor teamColor)
+    {
+        ChessPosition kingPos = findKingPosition(teamColor);
+
+        if(kingPos == null)
+        {
+            return false;
+        }
+
+        ChessPiece king = chessBoard.getPiece(kingPos);
+        if (king == null || king.hasMoved()) {
+            return false;
+        }
+        return true;
     }
 }
