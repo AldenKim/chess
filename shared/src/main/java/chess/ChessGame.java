@@ -101,7 +101,7 @@ public class ChessGame {
             }
         }
 
-        if(piece.getPieceType() == ChessPiece.PieceType.PAWN && canEnPassantLeft(piece.getTeamColor(), startPosition))
+        if(piece.getPieceType() == ChessPiece.PieceType.PAWN && canEnPassantLeft(startPosition))
         {
             if(piece.getTeamColor() == TeamColor.WHITE) {
                 validMoves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 1), null));
@@ -111,7 +111,7 @@ public class ChessGame {
             }
         }
 
-        if(piece.getPieceType() == ChessPiece.PieceType.PAWN && canEnPassantRight(piece.getTeamColor(), startPosition))
+        if(piece.getPieceType() == ChessPiece.PieceType.PAWN && canEnPassantRight(startPosition))
         {
             if(piece.getTeamColor() == TeamColor.WHITE) {
                 validMoves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 1), null));
@@ -404,10 +404,9 @@ public class ChessGame {
         return false;
     }
 
-    private boolean canEnPassantLeft(TeamColor teamColor, ChessPosition startPos)
+    private boolean canEnPassantLeft(ChessPosition startPos)
     {
         int currentColumn = startPos.getColumn();
-        int currentRow = startPos.getRow();
 
         if(currentColumn <= 1)
         {
@@ -426,17 +425,16 @@ public class ChessGame {
 
         if (pawnNext != null && pawnNext.getPieceType() == ChessPiece.PieceType.PAWN &&
                 pawn != null && pawn.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if (pawnNext.hasDoubleMove() && pawn.getTeamColor() != pawnNext.getTeamColor() && lastMoveWasDouble(startPos)) {
+            if (pawn.getTeamColor() != pawnNext.getTeamColor() && lastMoveWasDouble()) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean canEnPassantRight(TeamColor teamColor, ChessPosition startPos)
+    private boolean canEnPassantRight(ChessPosition startPos)
     {
         int currentColumn = startPos.getColumn();
-        int currentRow = startPos.getRow();
 
         if(currentColumn >= 8)
         {
@@ -455,21 +453,19 @@ public class ChessGame {
 
         if (pawnNext != null && pawnNext.getPieceType() == ChessPiece.PieceType.PAWN &&
                 pawn != null && pawn.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if (pawnNext.hasDoubleMove() && pawn.getTeamColor() != pawnNext.getTeamColor() && lastMoveWasDouble(startPos)) {
+            if (pawn.getTeamColor() != pawnNext.getTeamColor() && lastMoveWasDouble()) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean lastMoveWasDouble (ChessPosition currentPosition)
+    private boolean lastMoveWasDouble ()
     {
         if(lastMove != null && chessBoard.getPiece(lastMove.getEndPosition()).getPieceType() == ChessPiece.PieceType.PAWN)
         {
             ChessPosition start = lastMove.getStartPosition();
             ChessPosition end = lastMove.getEndPosition();
-
-            int moveDirection = (chessBoard.getPiece(lastMove.getEndPosition()).getTeamColor() == TeamColor.WHITE) ? 1 : -1;
 
             return Math.abs(start.getRow()- end.getRow()) == 2;
         }
