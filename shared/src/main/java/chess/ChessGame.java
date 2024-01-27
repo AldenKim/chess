@@ -110,7 +110,6 @@ public class ChessGame {
                 validMoves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 1), null));
             }
         }
-
         if(piece.getPieceType() == ChessPiece.PieceType.PAWN && canEnPassantRight(startPosition))
         {
             if(piece.getTeamColor() == TeamColor.WHITE) {
@@ -177,10 +176,6 @@ public class ChessGame {
             chessBoard.removePiece(start, piece);
         }
         piece.setMoved();
-        if (Math.abs(end.getRow() - start.getRow()) == 2 && piece.getPieceType() == ChessPiece.PieceType.PAWN)
-        {
-            piece.setDoubleMove();
-        }
         lastMove = move;
 
         turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
