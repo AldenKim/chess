@@ -6,7 +6,7 @@ import model.UserData;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class UserDAO implements DataAccess {
+public class UserDAO {
     private Map<String, UserData> userDataMap;
 
     public UserDAO(){
@@ -31,5 +31,12 @@ public abstract class UserDAO implements DataAccess {
         else{
             throw new DataAccessException("User not found: " + username);
         }
+    }
+
+    public void updateUser(UserData user) throws DataAccessException {
+        if (!userDataMap.containsKey(user.getUsername())) {
+            throw new DataAccessException("User not found with username: " + user.getUsername());
+        }
+        userDataMap.put(user.getUsername(), user);
     }
 }
