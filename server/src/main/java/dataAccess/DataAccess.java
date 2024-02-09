@@ -6,8 +6,7 @@ import model.UserData;
 
 import javax.xml.crypto.Data;
 
-public interface DataAccess
-{
+public interface DataAccess {
     void clear() throws DataAccessException;
 
     void createUser(UserData user) throws DataAccessException;
