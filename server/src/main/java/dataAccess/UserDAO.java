@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserDAO {
-    private Map<String, UserData> userDataMap;
+    private HashMap<String, UserData> userDataMap;
 
     public UserDAO(){
         userDataMap = new HashMap<>();
