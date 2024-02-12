@@ -5,7 +5,6 @@ import model.AuthData;
 import java.util.HashMap;
 
 public interface AuthDAO {
-    HashMap<String, AuthData> authDataMap = new HashMap<>();
     void clear() throws DataAccessException;
 
     AuthData createAuth(AuthData auth) throws DataAccessException;
