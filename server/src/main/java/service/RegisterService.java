@@ -7,8 +7,6 @@ import model.AuthData;
 import model.UserData;
 import requests.RegisterRequest;
 import results.RegisterResult;
-
-import java.security.AuthProvider;
 import java.util.UUID;
 
 public class RegisterService {
