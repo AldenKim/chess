@@ -21,7 +21,7 @@ public class RegisterService {
     public RegisterResult register(RegisterRequest request) throws DataAccessException {
         try {
             if(userDAO.getUser(request.username()) != null) {
-                throw new DataAccessException("Error 403: Already Taken");
+                return new RegisterResult(null, null, "User already taken");
             }
 
             UserData newUser = new UserData(request.username(), request.password(), request.email());
@@ -32,7 +32,7 @@ public class RegisterService {
             userDAO.createUser(newUser);
             authDAO.createAuth(newAuth);
 
-            return new RegisterResult(newUser.username(), authToken);
+            return new RegisterResult(newUser.username(), authToken, null);
         }
         catch (DataAccessException e) {
             throw e;
