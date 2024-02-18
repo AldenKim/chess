@@ -16,7 +16,7 @@ public class LogoutService {
         try {
 
             if (!isValidAuthToken(request.authToken())) {
-                return new ListGamesResult("Error: Unauthorized");
+                return new LogoutResult("Error: Unauthorized");
             }
 
             authDAO.deleteAuth(request.authToken());
