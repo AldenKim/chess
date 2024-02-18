@@ -14,6 +14,11 @@ public class LogoutService {
 
     public LogoutResult logout(LogoutRequest request) throws DataAccessException {
         try {
+
+            if (!isValidAuthToken(request.authToken())) {
+                return new ListGamesResult("Error: Unauthorized");
+            }
+
             authDAO.deleteAuth(request.authToken());
 
             return new LogoutResult(null);
@@ -22,4 +27,7 @@ public class LogoutService {
         }
     }
 
+    private boolean isValidAuthToken(String authToken) throws DataAccessException {
+        return authDAO.getAuth(authToken) != null;
+    }
 }
