@@ -5,7 +5,7 @@ import model.GameData;
 import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO{
-    private final HashMap<String, GameData> gameDataMap = new HashMap<>();
+    private final HashMap<Integer, GameData> gameDataMap = new HashMap<>();
 
     @Override
     public void clear() throws DataAccessException {
@@ -14,12 +14,12 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public GameData createGame(GameData game) throws DataAccessException {
-        gameDataMap.put(String.valueOf(game.gameID()), game);
+        gameDataMap.put(game.gameID(), game);
         return game;
     }
 
     @Override
-    public GameData getGame(String gameID) throws DataAccessException {
+    public GameData getGame(int gameID) throws DataAccessException {
         return gameDataMap.get(gameID);
     }
 
@@ -29,7 +29,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(String gameID, GameData updatedGameData) throws DataAccessException {
+    public void updateGame(int gameID, GameData updatedGameData) throws DataAccessException {
         gameDataMap.put(gameID, updatedGameData);
     }
 }
