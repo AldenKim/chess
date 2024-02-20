@@ -23,7 +23,7 @@ public class LoginService {
             var user = userDAO.getUser(request.username());
 
             if(user == null || !user.password().equals(request.password())) {
-                return new LoginResult(null, null, "Invalid username or password");
+                return new LoginResult(null, null, "Error: Invalid username or password");
             }
 
             String authToken = UUID.randomUUID().toString();
