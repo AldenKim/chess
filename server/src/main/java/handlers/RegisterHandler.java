@@ -22,6 +22,11 @@ public class RegisterHandler {
 
         RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);
 
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
+            res.status(400); // Bad Request
+            return gson.toJson(new RegisterResult(null, null, "Error: Bad Request"));
+        }
+
         try {
             RegisterResult registerResult = registerService.register(registerRequest);
             if (registerResult.message() != null) {
