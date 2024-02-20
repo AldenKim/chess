@@ -24,6 +24,11 @@ public class RegisterHandler {
 
         try {
             RegisterResult registerResult = registerService.register(registerRequest);
+            if (registerResult.message() != null) {
+                res.status(403); // Bad Request
+            } else {
+                res.status(200); // OK
+            }
             return gson.toJson(registerResult);
         } catch (DataAccessException e) {
             res.status(500);

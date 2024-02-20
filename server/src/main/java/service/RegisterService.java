@@ -20,8 +20,10 @@ public class RegisterService {
 
     public RegisterResult register(RegisterRequest request) throws DataAccessException {
         try {
-            if(userDAO.getUser(request.username()) != null) {
-                return new RegisterResult(null, null, "User already taken");
+            UserData existingUser = userDAO.getUser(request.username());
+            if (existingUser != null) {
+                RegisterResult result = new RegisterResult(null, null, "Error: User Already Taken");
+                return result;
             }
 
             UserData newUser = new UserData(request.username(), request.password(), request.email());
