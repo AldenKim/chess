@@ -4,7 +4,6 @@ import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
-import requests.ListGamesRequest;
 import results.ListGamesResult;
 
 public class ListGamesService {
