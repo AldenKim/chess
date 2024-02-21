@@ -10,10 +10,12 @@ import results.CreateGameResult;
 public class CreateGameService {
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
+    private int gameIdCounter;
 
     public CreateGameService(GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
         this.authDAO = authDAO;
+        this.gameIdCounter = 0;
     }
 
     public CreateGameResult createGame(String authToken, CreateGameRequest request) throws DataAccessException {
@@ -22,7 +24,9 @@ public class CreateGameService {
                 return new CreateGameResult(null, "Error: Unauthorized");
             }
 
-            GameData newGame = new GameData(1, null,null, request.gameName(), null);
+            gameIdCounter++;
+
+            GameData newGame = new GameData(gameIdCounter, null,null, request.gameName(), null);
             GameData createdGame = gameDAO.createGame(newGame);
             return new CreateGameResult(createdGame.gameID(), null);
         } catch (DataAccessException e) {
