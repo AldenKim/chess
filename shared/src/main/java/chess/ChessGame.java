@@ -410,21 +410,11 @@ public class ChessGame {
 
         ChessPosition pawnNextPos = new ChessPosition(startPos.getRow(), startPos.getColumn()-1);
 
-        if(pawnNextPos.getRow() < 1 || pawnNextPos.getRow() > 8 || pawnNextPos.getColumn() < 1 || pawnNextPos.getColumn() > 8)
-        {
+        if(isOutOfBounds(pawnNextPos)) {
             return false;
         }
 
-        ChessPiece pawnNext = chessBoard.getPiece(pawnNextPos);
-        ChessPiece pawn = chessBoard.getPiece(startPos);
-
-        if (pawnNext != null && pawnNext.getPieceType() == ChessPiece.PieceType.PAWN &&
-                pawn != null && pawn.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if (pawn.getTeamColor() != pawnNext.getTeamColor() && lastMoveWasDouble()) {
-                return true;
-            }
-        }
-        return false;
+        return canPerformEnPassantMove(chessBoard, pawnNextPos,startPos);
     }
 
     private boolean canEnPassantRight(ChessPosition startPos)
@@ -438,8 +428,15 @@ public class ChessGame {
 
         ChessPosition pawnNextPos = new ChessPosition(startPos.getRow(), startPos.getColumn()+1);
 
-        if(pawnNextPos.getRow() < 1 || pawnNextPos.getRow() > 8 || pawnNextPos.getColumn() < 1 || pawnNextPos.getColumn() > 8)
-        {
+        if(isOutOfBounds(pawnNextPos)) {
+            return false;
+        }
+
+        return canPerformEnPassantMove(chessBoard, pawnNextPos,startPos);
+    }
+
+    private boolean canPerformEnPassantMove(ChessBoard chessBoard, ChessPosition pawnNextPos, ChessPosition startPos) {
+        if (isOutOfBounds(pawnNextPos)) {
             return false;
         }
 
@@ -447,12 +444,16 @@ public class ChessGame {
         ChessPiece pawn = chessBoard.getPiece(startPos);
 
         if (pawnNext != null && pawnNext.getPieceType() == ChessPiece.PieceType.PAWN &&
-                pawn != null && pawn.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if (pawn.getTeamColor() != pawnNext.getTeamColor() && lastMoveWasDouble()) {
-                return true;
-            }
+                pawn != null && pawn.getPieceType() == ChessPiece.PieceType.PAWN &&
+                pawn.getTeamColor() != pawnNext.getTeamColor() && lastMoveWasDouble()) {
+            return true;
         }
+
         return false;
+    }
+
+    private boolean isOutOfBounds(ChessPosition position) {
+        return position.getRow() < 1 || position.getRow() > 8 || position.getColumn() < 1 || position.getColumn() > 8;
     }
 
     private boolean lastMoveWasDouble ()

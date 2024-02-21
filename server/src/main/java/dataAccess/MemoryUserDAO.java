@@ -22,14 +22,4 @@ public class MemoryUserDAO implements UserDAO{
     public UserData getUser(String username) throws DataAccessException {
         return users.get(username);
     }
-
-    @Override
-    public void updateUser(UserData user) throws DataAccessException {
-        users.put(user.username(), user);
-    }
-
-    @Override
-    public void deleteUser(String username) throws DataAccessException {
-        users.remove(username);
-    }
 }

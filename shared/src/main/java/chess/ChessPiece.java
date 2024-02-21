@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -88,6 +89,49 @@ public class ChessPiece {
         }
         return validMoves;
     }
+    private void addValidMoveIfEmptyOrOpponent(Collection<ChessMove> validMoves, ChessPosition currentPosition, int newRowPos, int newColPos, ChessBoard board) {
+        if (isValidPosition(newRowPos, newColPos)) {
+            ChessPosition newPosition = new ChessPosition(newRowPos, newColPos);
+            ChessPiece pieceAtNewPosition = board.getPiece(newPosition);
+
+            if (pieceAtNewPosition == null || pieceAtNewPosition.getTeamColor() != getTeamColor()) {
+                validMoves.add(new ChessMove(currentPosition, newPosition, null));
+            }
+        }
+    }
+    private boolean isValidPosition(int row, int column) {
+        return row >= 1 && row <= 8 && column >= 1 && column <= 8;
+    }
+
+    private void addValidMovesInDirection(Collection<ChessMove> validMoves, ChessPosition myPosition, int[] rowMoves, int[] colMoves, ChessBoard board) {
+        for (int i = 0; i < rowMoves.length; i++) {
+            int newRowPos = myPosition.getRow();
+            int newColPos = myPosition.getColumn();
+
+            while (true) {
+                newRowPos += rowMoves[i];
+                newColPos += colMoves[i];
+
+                // Check if the new position is out of the board boundaries
+                if (newRowPos < 1 || newRowPos > 8 || newColPos < 1 || newColPos > 8) {
+                    break;
+                }
+
+                ChessPosition newPos = new ChessPosition(newRowPos, newColPos);
+                ChessPiece checkForPiece = board.getPiece(newPos);
+
+                // If the new position is empty or occupied by an opponent's piece, add it as a valid move
+                if (checkForPiece == null || checkForPiece.getTeamColor() != getTeamColor()) {
+                    validMoves.add(new ChessMove(myPosition, newPos, null));
+                }
+
+                // Break if there is a piece in the way, or if the boundary is reached
+                if (checkForPiece != null) {
+                    break;
+                }
+            }
+        }
+    }
 
     private Collection<ChessMove> getKingMoves (ChessBoard board, ChessPosition myPosition)
     {
@@ -100,14 +144,7 @@ public class ChessPiece {
             int newRowPos = myPosition.getRow() + rowPositions[i];
             int newColPos = myPosition.getColumn() + colPositions[i];
 
-            if (newRowPos >= 1 && newRowPos <= 8 && newColPos >= 1 && newColPos <= 8) {
-                ChessPosition newPos = new ChessPosition(newRowPos, newColPos);
-                ChessPiece checkForPiece = board.getPiece(newPos);
-
-                if (checkForPiece == null || checkForPiece.getTeamColor() != getTeamColor()) {
-                    validMoves.add(new ChessMove(myPosition, newPos, null));
-                }
-            }
+            addValidMoveIfEmptyOrOpponent(validMoves, myPosition, newRowPos, newColPos, board);
         }
         return validMoves;
     }
@@ -124,14 +161,7 @@ public class ChessPiece {
             int newRowPos = myPosition.getRow() + rowMoves[i];
             int newColPos = myPosition.getColumn() + colMoves[i];
 
-            if (newRowPos >= 1 && newRowPos <= 8 && newColPos >= 1 && newColPos <= 8) {
-                ChessPosition newPos = new ChessPosition(newRowPos, newColPos);
-                ChessPiece checkForPiece = board.getPiece(newPos);
-
-                if (checkForPiece == null || checkForPiece.getTeamColor() != getTeamColor()) {
-                    validMoves.add(new ChessMove(myPosition, newPos, null));
-                }
-            }
+            addValidMoveIfEmptyOrOpponent(validMoves, myPosition, newRowPos, newColPos, board);
         }
         return validMoves;
     }
@@ -142,36 +172,7 @@ public class ChessPiece {
         int[] rowMoves = {-1,-1,1,1};
         int[] colMoves = {-1,1,-1,1};
 
-        for(int i = 0; i < rowMoves.length; i++)
-        {
-            int newRowPos = myPosition.getRow();
-            int newColPos = myPosition.getColumn();
-
-            while (true)
-            {
-                newRowPos+=rowMoves[i];
-                newColPos+=colMoves[i];
-
-                if(newRowPos < 1 || newRowPos > 8 || newColPos < 1 || newColPos > 8)
-                {
-                    break;
-                }
-
-                ChessPosition newPos = new ChessPosition(newRowPos,newColPos);
-                ChessPiece checkForPiece = board.getPiece(newPos);
-                if(checkForPiece == null)
-                {
-                    validMoves.add(new ChessMove(myPosition, newPos, null));
-                }
-                else{
-                    if(checkForPiece.getTeamColor() != getTeamColor())
-                    {
-                        validMoves.add(new ChessMove(myPosition, newPos, null));
-                    }
-                    break;
-                }
-            }
-        }
+        addValidMovesInDirection(validMoves, myPosition, rowMoves, colMoves, board);
         return validMoves;
     }
 
@@ -181,37 +182,7 @@ public class ChessPiece {
         int[] rowMoves = {1,-1,0,0};
         int[] colMoves = {0,0,1,-1};
 
-        for(int i = 0; i < rowMoves.length; i++) {
-            int newRowPos = myPosition.getRow();
-            int newColPos = myPosition.getColumn();
-
-            while(true)
-            {
-                newRowPos += rowMoves[i];
-                newColPos += colMoves[i];
-
-                if(newRowPos < 1 || newRowPos > 8 || newColPos < 1 || newColPos > 8)
-                {
-                    break;
-                }
-
-                ChessPosition newPos = new ChessPosition(newRowPos, newColPos);
-                ChessPiece checkForPiece = board.getPiece(newPos);
-
-                if(checkForPiece == null)
-                {
-                    validMoves.add(new ChessMove(myPosition, newPos, null));
-                }
-                else
-                {
-                    if (checkForPiece.getTeamColor() != getTeamColor())
-                    {
-                        validMoves.add(new ChessMove(myPosition,newPos,null));
-                    }
-                    break;
-                }
-            }
-        }
+        addValidMovesInDirection(validMoves, myPosition, rowMoves, colMoves, board);
         return validMoves;
     }
 
