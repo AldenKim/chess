@@ -213,6 +213,21 @@ public class ChessGame {
         return false;
     }
 
+    private boolean isAnyPieceUnderAttack(TeamColor teamColor) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPiece piece = chessBoard.getPiece(new ChessPosition(row, col));
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> moves = validMoves(new ChessPosition(row, col));
+                    if (moves != null && !moves.isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Determines if the given team is in checkmate
      *
@@ -225,22 +240,7 @@ public class ChessGame {
             return false;
         }
 
-        for(int row = 1; row < 9; row++)
-        {
-            for (int col = 1; col < 9; col++)
-            {
-                ChessPiece getPiece = chessBoard.getPiece(new ChessPosition(row, col));
-                if(getPiece != null && getPiece.getTeamColor() == teamColor)
-                {
-                    Collection<ChessMove> getMoves = validMoves(new ChessPosition(row, col));
-                    if(getMoves != null && !getMoves.isEmpty())
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return !isAnyPieceUnderAttack(teamColor);
     }
 
     /**
@@ -256,22 +256,7 @@ public class ChessGame {
             return false;
         }
 
-        for(int row = 1; row < 9; row++)
-        {
-            for (int col = 1; col < 9; col++)
-            {
-                ChessPiece getPiece = chessBoard.getPiece(new ChessPosition(row, col));
-                if(getPiece != null && getPiece.getTeamColor() == teamColor)
-                {
-                    Collection<ChessMove> getMoves = validMoves(new ChessPosition(row, col));
-                    if(getMoves != null && !getMoves.isEmpty())
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return !isAnyPieceUnderAttack(teamColor);
     }
 
     /**
