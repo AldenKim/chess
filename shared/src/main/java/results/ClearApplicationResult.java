@@ -1,3 +1,3 @@
 package results;
 
-public record ClearApplicationResult(String errorMessage) { }
+public record ClearApplicationResult(String message) { }

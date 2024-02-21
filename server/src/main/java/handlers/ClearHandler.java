@@ -27,7 +27,7 @@ public class ClearHandler {
             return gson.toJson(Map.of("message", "Database cleared successfully."));
         } catch (DataAccessException e) {
             res.status(500);
-            return gson.toJson(new ClearApplicationResult( "Error: " + e.getMessage()));
+            return gson.toJson(new ClearApplicationResult("Error: " + e.getMessage()));
         }
     }
 }

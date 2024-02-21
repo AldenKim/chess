@@ -22,7 +22,7 @@ public class ListGamesHandler {
 
         try {
             ListGamesResult listGamesResult = listGamesService.listGames(authToken);
-            if (listGamesResult.errorMessage() != null) {
+            if (listGamesResult.message() != null) {
                 res.status(401); // Unauthorized
             } else {
                 res.status(200); // OK
