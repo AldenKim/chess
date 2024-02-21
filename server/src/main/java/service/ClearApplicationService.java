@@ -18,7 +18,7 @@ public class ClearApplicationService {
         this.authDAO = authDAO;
     }
 
-    public ClearApplicationResult clearApplication(ClearApplicationRequest request) throws DataAccessException{
+    public ClearApplicationResult clearApplication() throws DataAccessException{
         try {
             userDAO.clear();
             gameDAO.clear();

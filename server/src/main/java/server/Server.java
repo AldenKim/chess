@@ -33,7 +33,7 @@ public class Server {
 
         ClearApplicationService clearApplicationService = new ClearApplicationService(userDAO, gameDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearApplicationService);
-        Spark.delete("/db", clearHandler::clearDatabase);
+        Spark.delete("/db", (req, res) -> clearHandler.clearDatabase(res));
 
         Spark.awaitInitialization();
         return Spark.port();

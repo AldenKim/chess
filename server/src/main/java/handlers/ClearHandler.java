@@ -2,7 +2,6 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
-import requests.ClearApplicationRequest;
 import service.ClearApplicationService;
 import spark.Request;
 import spark.Response;
@@ -18,13 +17,11 @@ public class ClearHandler {
         this.gson = new Gson();
     }
 
-    public String clearDatabase(Request req, Response res) {
+    public String clearDatabase(Response res) {
         res.type("application/json");
 
-        ClearApplicationRequest clearRequest = gson.fromJson(req.body(), ClearApplicationRequest.class);
-
         try {
-            clearApplicationService.clearApplication(clearRequest);
+            clearApplicationService.clearApplication();
             res.status(200);
             return gson.toJson(Map.of("message", "Database cleared successfully."));
         } catch (DataAccessException e) {
