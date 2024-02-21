@@ -1,3 +1,3 @@
 package results;
 
-public record LogoutResult(String errorMessage) { }
+public record LogoutResult(String message) { }

@@ -3,9 +3,11 @@ package server;
 import dataAccess.*;
 import handlers.ClearHandler;
 import handlers.LoginHandler;
+import handlers.LogoutHandler;
 import handlers.RegisterHandler;
 import service.ClearApplicationService;
 import service.LoginService;
+import service.LogoutService;
 import service.RegisterService;
 import spark.*;
 
@@ -28,6 +30,9 @@ public class Server {
 
         LoginHandler loginHandler = new LoginHandler(new LoginService(userDAO, authDAO));
         Spark.post("/session", loginHandler::login);
+
+        LogoutHandler logoutHandler = new LogoutHandler(new LogoutService(authDAO));
+        Spark.delete("/session", logoutHandler::logout);
 
         ClearApplicationService clearApplicationService = new ClearApplicationService(userDAO, gameDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearApplicationService);
