@@ -4,7 +4,6 @@ import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.UserDAO;
-import requests.ClearApplicationRequest;
 import results.ClearApplicationResult;
 
 public class ClearApplicationService {
@@ -18,15 +17,15 @@ public class ClearApplicationService {
         this.authDAO = authDAO;
     }
 
-    public ClearApplicationResult clearApplication() throws DataAccessException{
+    public void clearApplication() throws DataAccessException{
         try {
             userDAO.clear();
             gameDAO.clear();
             authDAO.clear();
 
-            return new ClearApplicationResult(null);
+            new ClearApplicationResult(null);
         } catch (DataAccessException e) {
-            return new ClearApplicationResult("Error: " + e.getMessage());
+            new ClearApplicationResult("Error: " + e.getMessage());
         }
     }
 }

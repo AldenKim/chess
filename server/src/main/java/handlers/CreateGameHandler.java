@@ -26,7 +26,7 @@ public class CreateGameHandler {
 
         if (createGameRequest == null || createGameRequest.gameName() == null || createGameRequest.gameName().isEmpty()) {
             res.status(400); // Bad Request
-            return gson.toJson(new CreateGameResult(-1, "Error: Bad Request"));
+            return gson.toJson(new CreateGameResult(null, "Error: Bad Request"));
         }
 
         try {
@@ -40,7 +40,7 @@ public class CreateGameHandler {
             return gson.toJson(createGameResult);
         } catch (DataAccessException e) {
             res.status(500);
-            return gson.toJson(new CreateGameResult(-1, "Error: " + e.getMessage()));
+            return gson.toJson(new CreateGameResult(null, "Error: " + e.getMessage()));
         }
     }
 }

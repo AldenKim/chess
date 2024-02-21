@@ -2,8 +2,9 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
+import results.ClearApplicationResult;
+import results.CreateGameResult;
 import service.ClearApplicationService;
-import spark.Request;
 import spark.Response;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ public class ClearHandler {
             return gson.toJson(Map.of("message", "Database cleared successfully."));
         } catch (DataAccessException e) {
             res.status(500);
-            return gson.toJson(Map.of("error", "Failed to clear database: " + e.getMessage()));
+            return gson.toJson(new ClearApplicationResult( "Error: " + e.getMessage()));
         }
     }
 }
