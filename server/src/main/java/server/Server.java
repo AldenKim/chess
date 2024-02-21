@@ -1,14 +1,8 @@
 package server;
 
 import dataAccess.*;
-import handlers.ClearHandler;
-import handlers.LoginHandler;
-import handlers.LogoutHandler;
-import handlers.RegisterHandler;
-import service.ClearApplicationService;
-import service.LoginService;
-import service.LogoutService;
-import service.RegisterService;
+import handlers.*;
+import service.*;
 import spark.*;
 
 import java.nio.file.Paths;
@@ -33,6 +27,9 @@ public class Server {
 
         LogoutHandler logoutHandler = new LogoutHandler(new LogoutService(authDAO));
         Spark.delete("/session", logoutHandler::logout);
+
+        CreateGameHandler createGameHandler = new CreateGameHandler(new CreateGameService(gameDAO, authDAO));
+        Spark.post("/game", createGameHandler::createGame);
 
         ClearApplicationService clearApplicationService = new ClearApplicationService(userDAO, gameDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearApplicationService);
