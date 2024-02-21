@@ -31,6 +31,9 @@ public class Server {
         CreateGameHandler createGameHandler = new CreateGameHandler(new CreateGameService(gameDAO, authDAO));
         Spark.post("/game", createGameHandler::createGame);
 
+        JoinGameHandler joinGameHandler = new JoinGameHandler(new JoinGameService(gameDAO, authDAO));
+        Spark.put("/game", joinGameHandler::joinGame);
+
         ClearApplicationService clearApplicationService = new ClearApplicationService(userDAO, gameDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearApplicationService);
         Spark.delete("/db", (req, res) -> clearHandler.clearDatabase(res));

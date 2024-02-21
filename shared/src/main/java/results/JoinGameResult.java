@@ -1,3 +1,3 @@
 package results;
 
-public record JoinGameResult(String errorMessage) { }
+public record JoinGameResult(String message) { }

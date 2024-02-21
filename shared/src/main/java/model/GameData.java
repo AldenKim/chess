@@ -14,7 +14,7 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
         }
     }
 
-    public GameData withObserver(String username) {
+    public GameData withObserver() {
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 

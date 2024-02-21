@@ -16,21 +16,21 @@ public class JoinGameService {
         this.authDAO = authDAO;
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
+    public JoinGameResult joinGame(String authToken, JoinGameRequest request) throws DataAccessException {
         try {
-            if(!isValidAuthToken(request.authToken())) {
+            if(!isValidAuthToken(authToken)) {
                 return new JoinGameResult("Error: Unauthorized");
             }
 
             GameData game = gameDAO.getGame(request.gameID());
-            if (game == null) {
-                return new JoinGameResult("Error: Game not found");
+            if ((!game.whiteUsername().isEmpty() && request.playerColor().equalsIgnoreCase("WHITE") || !game.blackUsername().isEmpty() && request.playerColor().equalsIgnoreCase("BLACK")) && request.playerColor() != null ) {
+                return new JoinGameResult("Error: Game already taken");
             }
 
             if("WHITE".equalsIgnoreCase(request.playerColor()) || "BLACK".equalsIgnoreCase(request.playerColor())) {
-                gameDAO.updateGame(request.gameID(), game.withPlayer(request.playerColor(), authDAO.getAuth(request.authToken()).username()));
+                gameDAO.updateGame(request.gameID(), game.withPlayer(request.playerColor(), authDAO.getAuth(authToken).username()));
             } else {
-                gameDAO.updateGame(request.gameID(), game.withObserver(authDAO.getAuth(request.authToken()).username()));
+                gameDAO.updateGame(request.gameID(), game.withObserver());
             }
 
             return new JoinGameResult(null);
