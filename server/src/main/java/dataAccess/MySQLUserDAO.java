@@ -9,6 +9,10 @@ import java.sql.SQLException;
 
 public class MySQLUserDAO implements UserDAO{
 
+    public MySQLUserDAO() throws DataAccessException  {
+        configureDatabase();
+    }
+
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
@@ -50,6 +54,29 @@ public class MySQLUserDAO implements UserDAO{
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error while fetching user: " + e.getMessage());
+        }
+    }
+
+    private static final String[] CREATE_USERS_TABLE_QUERY = {
+            "CREATE TABLE IF NOT EXISTS users (" +
+                    "username VARCHAR(50) NOT NULL, " +
+                    "password VARCHAR(255) NOT NULL, " +
+                    "email VARCHAR(100) NOT NULL, " +
+                    "PRIMARY KEY (username)" +
+                    ")"
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            for (String query : CREATE_USERS_TABLE_QUERY) {
+                try (PreparedStatement statement = conn.prepareStatement(query)) {
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error configuring database: " + e.getMessage());
         }
     }
 }
