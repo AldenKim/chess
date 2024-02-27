@@ -15,9 +15,11 @@ public class MySQLGameDAO implements GameDAO{
 
     private final Gson gson;
 
-    public MySQLGameDAO() {
+    public MySQLGameDAO() throws DataAccessException{
         gson = new Gson();
+        configureDatabase();
     }
+
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
@@ -98,4 +100,24 @@ public class MySQLGameDAO implements GameDAO{
         return gson.fromJson(json, ChessGame.class);
     }
 
+    private static final String[] CREATE_GAMES_TABLE_QUERY = {
+            "CREATE TABLE IF NOT EXISTS games (" +
+                    "gameID INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "gameData TEXT NOT NULL" +
+                    ")"
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            for (String query : CREATE_GAMES_TABLE_QUERY) {
+                try (PreparedStatement statement = conn.prepareStatement(query)) {
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error configuring database: " + e.getMessage());
+        }
+    }
 }
