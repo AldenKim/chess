@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class MySQLAuthDAO implements AuthDAO {
 
     public MySQLAuthDAO() throws DataAccessException {
-
+        configureDatabase();
     }
 
     @Override
@@ -56,6 +56,34 @@ public class MySQLAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection();
+        PreparedStatement statement = conn.prepareStatement("DELETE FROM auth WHERE auth_token = ?")) {
+            statement.setString(1, authToken);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error while deleting auth data: " + e.getMessage());
+        }
+    }
 
+    private static final String[] CREATE_AUTH_TABLE_QUERY = {
+            "CREATE TABLE IF NOT EXISTS auth (" +
+                    "auth_token VARCHAR(255) NOT NULL, " +
+                    "username VARCHAR(50) NOT NULL, " +
+                    "PRIMARY KEY (auth_token)" +
+                    ")"
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            for (String query : CREATE_AUTH_TABLE_QUERY) {
+                try (PreparedStatement statement = conn.prepareStatement(query)) {
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error configuring database: " + e.getMessage());
+        }
     }
 }
