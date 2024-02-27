@@ -2,8 +2,10 @@ package service;
 
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
+import dataAccess.MySQLUserDAO;
 import dataAccess.UserDAO;
 import model.AuthData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import requests.LoginRequest;
 import results.LoginResult;
 
@@ -22,8 +24,16 @@ public class LoginService {
         try {
             var user = userDAO.getUser(request.username());
 
-            if(user == null || !user.password().equals(request.password())) {
-                return new LoginResult(null, null, "Error: Invalid username or password");
+            if(userDAO instanceof MySQLUserDAO) {
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                String hashedEnteredPassword = encoder.encode(request.password());
+                if(user == null || !encoder.matches(hashedEnteredPassword, user.password())) {
+                    return new LoginResult(null, null, "Error: Invalid username or password");
+                }
+            } else {
+                if (user == null || !user.password().equals(request.password())) {
+                    return new LoginResult(null, null, "Error: Invalid username or password");
+                }
             }
 
             String authToken = UUID.randomUUID().toString();
