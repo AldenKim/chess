@@ -61,29 +61,6 @@ public class MySQLUserDAO implements UserDAO{
         }
     }
 
-    public boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
-        String hashedPassword = readHashedPasswordFromDatabase(username);
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.matches(providedClearTextPassword, hashedPassword);
-    }
-
-    private String readHashedPasswordFromDatabase(String username) throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement("SELECT password FROM users WHERE username = ?")) {
-            statement.setString(1, username);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getString("password");
-                } else {
-                    throw new DataAccessException("User not found");
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error reading hashed password from database: " + e.getMessage());
-        }
-    }
-
     private static final String[] CREATE_USERS_TABLE_QUERY = {
             "CREATE TABLE IF NOT EXISTS users (" +
                     "username VARCHAR(50) NOT NULL, " +
