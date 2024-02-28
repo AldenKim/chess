@@ -26,8 +26,7 @@ public class LoginService {
 
             if(userDAO instanceof MySQLUserDAO) {
                 BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-                String hashedEnteredPassword = encoder.encode(request.password());
-                if(user == null || !encoder.matches(hashedEnteredPassword, user.password())) {
+                if(user == null || !encoder.matches(request.password(), user.password())) {
                     return new LoginResult(null, null, "Error: Invalid username or password");
                 }
             } else {
