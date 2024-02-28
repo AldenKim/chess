@@ -42,4 +42,7 @@ public class UserDAODatabaseTests {
         assertNull(userDAO.getUser("testUser1"));
         assertNull(userDAO.getUser("testUser2"));
     }
+
+    @Test
+
 }
