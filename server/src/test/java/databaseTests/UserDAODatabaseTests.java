@@ -64,4 +64,23 @@ public class UserDAODatabaseTests {
         UserData user2 = new UserData("testUser1", "password2", "email2@example.com");
         assertThrows(DataAccessException.class, () -> userDAO.createUser(user2));
     }
+
+    @Test
+    public void positiveGetUserTest() throws DataAccessException {
+        UserData user = new UserData("testUser1", "password1", "email@example.com");
+        userDAO.createUser(user);
+
+        UserData retrievedUser = userDAO.getUser("testUser1");
+
+        assertEquals(user.username(), retrievedUser.username());
+        assertEquals(user.email(), retrievedUser.email());
+        assertNotNull(retrievedUser.password());
+        assertNotNull(retrievedUser);
+    }
+
+    @Test
+    public void negativeGetUserTest() throws DataAccessException {
+        String nonExistentUser = "nonExistent";
+        assertNull(userDAO.getUser(nonExistentUser));
+    }
 }
