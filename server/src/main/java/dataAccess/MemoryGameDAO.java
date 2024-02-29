@@ -14,8 +14,12 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public GameData createGame(GameData game) throws DataAccessException {
-        gameDataMap.put(game.gameID(), game);
-        return game;
+        if (gameDataMap.containsKey(game.gameID())) {
+            throw new DataAccessException("Username already exists");
+        } else {
+            gameDataMap.put(game.gameID(), game);
+            return game;
+        }
     }
 
     @Override

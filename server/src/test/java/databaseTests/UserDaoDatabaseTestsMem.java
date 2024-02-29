@@ -1,9 +1,7 @@
 package databaseTests;
 
 import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryUserDAO;
-import dataAccess.MySQLUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
