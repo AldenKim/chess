@@ -1,8 +1,7 @@
-package databaseTests;
+package dataAccessTests;
 
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
 import dataAccess.MySQLAuthDAO;
 import model.AuthData;
 import org.junit.jupiter.api.AfterEach;
@@ -11,12 +10,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AuthDAODatabaseTestsMem {
+public class AuthDAODatabaseTests {
     private AuthDAO authDAO;
 
     @BeforeEach
     public void setUp() throws DataAccessException {
-        authDAO = new MemoryAuthDAO();
+        authDAO = new MySQLAuthDAO();
         authDAO.clear();
     }
 

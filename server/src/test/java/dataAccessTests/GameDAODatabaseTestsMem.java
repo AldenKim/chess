@@ -1,26 +1,23 @@
-package databaseTests;
+package dataAccessTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
-import dataAccess.MySQLGameDAO;
+import dataAccess.MemoryGameDAO;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameDAODatabaseTests {
+public class GameDAODatabaseTestsMem {
+
     private GameDAO gameDAO;
 
     @BeforeEach
     public void setUp() throws DataAccessException {
-        gameDAO = new MySQLGameDAO();
+        gameDAO = new MemoryGameDAO();
         gameDAO.clear();
     }
 

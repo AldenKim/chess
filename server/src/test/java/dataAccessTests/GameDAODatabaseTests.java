@@ -1,9 +1,8 @@
-package databaseTests;
+package dataAccessTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
-import dataAccess.MemoryGameDAO;
 import dataAccess.MySQLGameDAO;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
@@ -12,13 +11,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameDAODatabaseTestsMem {
-
+public class GameDAODatabaseTests {
     private GameDAO gameDAO;
 
     @BeforeEach
     public void setUp() throws DataAccessException {
-        gameDAO = new MemoryGameDAO();
+        gameDAO = new MySQLGameDAO();
         gameDAO.clear();
     }
 
