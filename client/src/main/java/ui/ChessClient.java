@@ -37,6 +37,7 @@ public class ChessClient {
                     break;
                 case "3":
                 case "login":
+                    login();
                     break;
                 case "4":
                 case "register":
@@ -64,8 +65,41 @@ public class ChessClient {
         System.out.println("Leaving Game. Bye!");
         System.exit(0);
     }
+    public static void login() {
+        System.out.println("\nPlease provide correct login information:");
+        System.out.print("Username: ");
+        String username = scanner.nextLine().trim();
+        System.out.print("Password: ");
+        String password = scanner.nextLine().trim();
 
-    private static void register() {
+        try {
+            URL url = new URL("http://localhost:8080/session");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+
+            conn.addRequestProperty("Content-type", "application/json");
+
+            JsonObject loginData = new JsonObject();
+            loginData.addProperty("username", username);
+            loginData.addProperty("password", password);
+
+            var jsonData = new Gson().toJson(loginData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Login successful");
+                post_loginUI();
+                isLoggedIn = true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void register() {
         System.out.println("\nPlease provide registration information:");
         System.out.print("Username: ");
         String username = scanner.nextLine().trim();
