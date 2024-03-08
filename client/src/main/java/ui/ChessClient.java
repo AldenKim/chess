@@ -51,7 +51,18 @@ public class ChessClient {
     }
 
     public static void post_loginUI() {
-        System.out.println("PLACE-HOLDER");
+        while(true) {
+            System.out.println("\nOptions:");
+            System.out.println("1. Help");
+            System.out.println("2. Logout");
+            System.out.println("3. Create Game");
+            System.out.println("4. List Games");
+            System.out.println("5. Join Gam");
+            System.out.println("4. Join Observer");
+
+            System.out.print(LOGGED_OUT_PREFIX);
+            String userInput = scanner.nextLine().trim().toLowerCase();
+        }
     }
 
     private static void displayHelpText() {
@@ -91,6 +102,7 @@ public class ChessClient {
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 System.out.println("Login successful");
+                System.out.println("Logged in as: " + username);
                 post_loginUI();
                 isLoggedIn = true;
             }
@@ -128,6 +140,7 @@ public class ChessClient {
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 System.out.println("Registration successful!");
+                System.out.println("Logged in as: " + username);
                 post_loginUI();
                 isLoggedIn = true;
             } else {
