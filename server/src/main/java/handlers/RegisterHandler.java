@@ -33,6 +33,9 @@ public class RegisterHandler {
                 res.status(403); // Bad Request
             } else {
                 res.status(200); // OK
+                if (registerResult.authToken() != null) {
+                    res.header("Authorization", registerResult.authToken());
+                }
             }
             return gson.toJson(registerResult);
         } catch (DataAccessException e) {

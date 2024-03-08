@@ -28,6 +28,9 @@ public class LoginHandler {
                 res.status(401); // Unauthorized
             } else {
                 res.status(200); // OK
+                if (loginResult.authToken() != null) {
+                    res.header("Authorization", loginResult.authToken());
+                }
             }
             return gson.toJson(loginResult);
         } catch (DataAccessException e) {
