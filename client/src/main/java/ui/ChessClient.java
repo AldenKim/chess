@@ -11,11 +11,11 @@ import java.util.Scanner;
 public class ChessClient {
     private static final Scanner scanner = new Scanner(System.in);
     private static final String LOGGED_OUT_PREFIX = "[LOGGED-OUT] >>> ";
-
+    private static final String LOGGED_IN_PREFIX = "[LOGGED-IN] >>> ";
     private static boolean isLoggedIn = false;
 
     public static void pre_loginUI() {
-        System.out.println("Welcome to the Chess Game");
+        System.out.println("\nWelcome to the Chess Game");
         while (!isLoggedIn) {
             System.out.println("\nOptions:");
             System.out.println("1. Help");
@@ -29,7 +29,7 @@ public class ChessClient {
             switch (userInput) {
                 case "1":
                 case "help":
-                    displayHelpText();
+                    displayHelpTextPre();
                     break;
                 case "2":
                 case "quit":
@@ -50,32 +50,66 @@ public class ChessClient {
         }
     }
 
-    public static void post_loginUI() {
-        while(true) {
-            System.out.println("\nOptions:");
-            System.out.println("1. Help");
-            System.out.println("2. Logout");
-            System.out.println("3. Create Game");
-            System.out.println("4. List Games");
-            System.out.println("5. Join Gam");
-            System.out.println("4. Join Observer");
+    public static void post_loginUI(String authToken) {
+        System.out.println("\nPost Login Options:");
+        System.out.println("1. Help");
+        System.out.println("2. Logout");
+        System.out.println("3. Create Game");
+        System.out.println("4. List Games");
+        System.out.println("5. Join Game");
+        System.out.println("6. Join Observer");
 
-            System.out.print(LOGGED_OUT_PREFIX);
-            String userInput = scanner.nextLine().trim().toLowerCase();
+        while(true) {
+            System.out.println();
+            System.out.print(LOGGED_IN_PREFIX);
+            String userInput = scanner.nextLine().toLowerCase();
+
+            switch (userInput) {
+                case "1":
+                case "help":
+                    displayHelpTextPost();
+                    break;
+                case "2":
+                case "logout":
+                    logout(authToken);
+                    break;
+                case "3":
+                case "create game":
+                    break;
+                case "4":
+                case "list games":
+                    break;
+                case "5":
+                case "join game":
+                    break;
+                case "6":
+                case "join observer":
+                    break;
+            }
         }
     }
 
-    private static void displayHelpText() {
+    private static void displayHelpTextPre() {
         System.out.println("Help - Possible commands");
         System.out.println("Quit - Exit Program, quit playing chess");
         System.out.println("Login - To play");
         System.out.println("Register - Create an account");
     }
 
+    private static void displayHelpTextPost() {
+        System.out.println("1. Help - Possible commands");
+        System.out.println("2. Logout - Logout and quit from program");
+        System.out.println("3. Create Game - Possible commands");
+        System.out.println("4. List Games - Possible commands");
+        System.out.println("5. Join Game - Possible commands");
+        System.out.println("6. Join Observer - Possible commands");
+    }
+
     private static void quitProgram() {
         System.out.println("Leaving Game. Bye!");
         System.exit(0);
     }
+
     public static void login() {
         System.out.println("\nPlease provide correct login information:");
         System.out.print("Username: ");
@@ -101,10 +135,14 @@ public class ChessClient {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
+                String authToken = conn.getHeaderField("Authorization");
                 System.out.println("Login successful");
                 System.out.println("Logged in as: " + username);
-                post_loginUI();
+                post_loginUI(authToken);
                 isLoggedIn = true;
+            } else {
+                String error = conn.getResponseMessage();
+                System.out.println("Login failed: " + error);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -139,15 +177,38 @@ public class ChessClient {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
+                String authToken = conn.getHeaderField("Authorization");
                 System.out.println("Registration successful!");
                 System.out.println("Logged in as: " + username);
-                post_loginUI();
+                post_loginUI(authToken);
                 isLoggedIn = true;
             } else {
                 String error = conn.getResponseMessage();
-                System.out.println("Registration failed." + error);
+                System.out.println("Registration failed: " + error);
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void logout(String authToken) {
+        try {
+            URL url = new URL("http://localhost:8080/session");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+            conn.setRequestProperty("Authorization", authToken);
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Logout successful\n");
+                isLoggedIn = false;
+                pre_loginUI();
+            } else {
+                String error = conn.getResponseMessage();
+                System.out.println("Logout failed: " + error);
+            }
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }
