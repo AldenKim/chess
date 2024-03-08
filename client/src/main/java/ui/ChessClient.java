@@ -1,5 +1,8 @@
 package ui;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,10 +12,12 @@ public class ChessClient {
     private static final Scanner scanner = new Scanner(System.in);
     private static final String LOGGED_OUT_PREFIX = "[LOGGED-OUT] >>> ";
 
+    private static boolean isLoggedIn = false;
+
     public static void pre_loginUI() {
-        System.out.println("Welcome to the Chess Game\n");
-        while (true) {
-            System.out.println("Options:");
+        System.out.println("Welcome to the Chess Game");
+        while (!isLoggedIn) {
+            System.out.println("\nOptions:");
             System.out.println("1. Help");
             System.out.println("2. Quit");
             System.out.println("3. Login");
@@ -61,7 +66,7 @@ public class ChessClient {
     }
 
     private static void register() {
-        System.out.println("Please provide registration information:");
+        System.out.println("\nPlease provide registration information:");
         System.out.print("Username: ");
         String username = scanner.nextLine().trim();
         System.out.print("Password: ");
@@ -75,16 +80,25 @@ public class ChessClient {
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
 
-            String data = "username=" + username + "&password=" + password + "&email=" + email;
-            conn.getOutputStream().write(data.getBytes());
+            conn.addRequestProperty("Content-Type", "application/json");
+
+            JsonObject registrationData = new JsonObject();
+            registrationData.addProperty("username", username);
+            registrationData.addProperty("password", password);
+            registrationData.addProperty("email", email);
+
+            var jsonData = new Gson().toJson(registrationData);
+            conn.getOutputStream().write(jsonData.getBytes());
             conn.connect();
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 System.out.println("Registration successful!");
                 post_loginUI();
+                isLoggedIn = true;
             } else {
-                System.out.println("Registration failed. Please try again later.");
+                String error = conn.getResponseMessage();
+                System.out.println("Registration failed." + error);
             }
         } catch (IOException e) {
             e.printStackTrace();
