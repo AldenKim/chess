@@ -29,7 +29,7 @@ public class LoginHandler {
             } else {
                 res.status(200); // OK
                 if (loginResult.authToken() != null) {
-                    res.header("Authorization", loginResult.authToken());
+                    res.header("authorization", loginResult.authToken());
                 }
             }
             return gson.toJson(loginResult);

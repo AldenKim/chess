@@ -75,6 +75,7 @@ public class ChessClient {
                     break;
                 case "3":
                 case "create game":
+
                     break;
                 case "4":
                 case "list games":
@@ -135,7 +136,7 @@ public class ChessClient {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                String authToken = conn.getHeaderField("Authorization");
+                String authToken = conn.getHeaderField("authorization");
                 System.out.println("Login successful");
                 System.out.println("Logged in as: " + username);
                 post_loginUI(authToken);
@@ -177,7 +178,7 @@ public class ChessClient {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                String authToken = conn.getHeaderField("Authorization");
+                String authToken = conn.getHeaderField("authorization");
                 System.out.println("Registration successful!");
                 System.out.println("Logged in as: " + username);
                 post_loginUI(authToken);
@@ -196,12 +197,12 @@ public class ChessClient {
             URL url = new URL("http://localhost:8080/session");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
-            conn.setRequestProperty("Authorization", authToken);
+            conn.setRequestProperty("authorization", authToken);
             conn.connect();
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                System.out.println("Logout successful\n");
+                System.out.println("Logout successful");
                 isLoggedIn = false;
                 pre_loginUI();
             } else {
@@ -211,5 +212,9 @@ public class ChessClient {
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void createGame(String authToken) {
+
     }
 }

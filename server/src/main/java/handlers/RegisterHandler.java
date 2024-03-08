@@ -34,7 +34,7 @@ public class RegisterHandler {
             } else {
                 res.status(200); // OK
                 if (registerResult.authToken() != null) {
-                    res.header("Authorization", registerResult.authToken());
+                    res.header("authorization", registerResult.authToken());
                 }
             }
             return gson.toJson(registerResult);
