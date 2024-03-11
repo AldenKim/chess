@@ -105,7 +105,7 @@ public class ChessClient {
         System.exit(0);
     }
 
-    public static void login() {
+    private static void login() {
         System.out.println("\nPlease provide correct login information:");
         System.out.print("Username: ");
         String username = scanner.nextLine().trim();
@@ -120,7 +120,7 @@ public class ChessClient {
         }
     }
 
-    public static void register() {
+    private static void register() {
         System.out.println("\nPlease provide registration information:");
         System.out.print("Username: ");
         String username = scanner.nextLine().trim();
@@ -137,7 +137,7 @@ public class ChessClient {
         }
     }
 
-    public static void logout(String authToken) {
+    private static void logout(String authToken) {
         boolean logoutSuccess = ServerFacade.logout(authToken);
         if (logoutSuccess) {
             isLoggedIn = false;
@@ -145,13 +145,21 @@ public class ChessClient {
         }
     }
 
-    public static void createGame(String authToken) {
+     private static void createGame(String authToken) {
         System.out.println("\nEnter the name of the new game:");
         String gameName = scanner.nextLine().trim();
 
         boolean createGameSuccess = ServerFacade.createGame(authToken, gameName);
         if (createGameSuccess) {
             post_loginUI(authToken);
+        }
+    }
+
+    private static void listGames(String authToken) {
+        System.out.println("List of Games: ");
+        String response = ServerFacade.listGames(authToken);
+        if(response == null) {
+            System.out.println("No games to list.");
         }
     }
 }

@@ -1,9 +1,10 @@
 package ui;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -100,7 +101,7 @@ public class ServerFacade {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Authorization", authToken);
+            conn.setRequestProperty("authorization", authToken);
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
 
@@ -123,5 +124,43 @@ public class ServerFacade {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static String listGames(String authToken) {
+        try {
+            URL url = new URL(BASE_URL + "/game");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("authorization", authToken);
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if(responseCode == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                int gameNumber = 0;
+                while((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                JsonArray gamesArray = JsonParser.parseString(response.toString()).getAsJsonArray();
+                for (JsonElement gameElement : gamesArray) {
+                    JsonObject game = gameElement.getAsJsonObject();
+                    String gameName = game.get("gameName").getAsString();
+                    JsonArray playersArray = game.get("players").getAsJsonArray();
+                    System.out.println("Game: " + gameNumber + ", Game Name: " + gameName + ", Players: " + playersArray);
+                    gameNumber++;
+                }
+                return response.toString();
+            } else {
+                String error = conn.getResponseMessage();
+                System.out.println("Failed to list games: " + error);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
