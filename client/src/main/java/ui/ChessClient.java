@@ -8,7 +8,13 @@ public class ChessClient {
     private static final String LOGGED_IN_PREFIX = "[LOGGED-IN] >>> ";
     private static boolean isLoggedIn = false;
 
-    public static void pre_loginUI() {
+    public ChessClient() {
+        pre_loginUI();
+    }
+
+    private static void pre_loginUI() {
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
         System.out.println("\nWelcome to the Chess Game");
         while (!isLoggedIn) {
             System.out.println("\nOptions:");
@@ -44,7 +50,7 @@ public class ChessClient {
         }
     }
 
-    public static void post_loginUI(String authToken) {
+    private static void post_loginUI(String authToken) {
         System.out.println("\nPost Login Options:");
         System.out.println("1. Help");
         System.out.println("2. Logout");
@@ -73,6 +79,7 @@ public class ChessClient {
                     break;
                 case "4":
                 case "list games":
+                    listGames(authToken);
                     break;
                 case "5":
                 case "join game":
@@ -114,7 +121,8 @@ public class ChessClient {
 
         String loginSuccessAndAuth = ServerFacade.login(username, password);
         if(loginSuccessAndAuth != null) {
-            System.out.println("\nLogged in as: " + username);
+            System.out.println("\nLogged in as: " + EscapeSequences.SET_TEXT_COLOR_GREEN+ username);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
             isLoggedIn = true;
             post_loginUI(loginSuccessAndAuth);
         }
@@ -131,7 +139,8 @@ public class ChessClient {
 
         String registerSuccessAndAuth = ServerFacade.register(username, password, email);
         if(registerSuccessAndAuth!=null) {
-            System.out.println("\nLogged in as: " + username);
+            System.out.println("\nLogged in as: " + EscapeSequences.SET_TEXT_COLOR_GREEN+ username);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
             isLoggedIn = true;
             post_loginUI(registerSuccessAndAuth);
         }
@@ -147,7 +156,7 @@ public class ChessClient {
 
      private static void createGame(String authToken) {
         System.out.println("\nEnter the name of the new game:");
-        String gameName = scanner.nextLine().trim();
+        String gameName = scanner.nextLine();
 
         boolean createGameSuccess = ServerFacade.createGame(authToken, gameName);
         if (createGameSuccess) {
@@ -157,9 +166,10 @@ public class ChessClient {
 
     private static void listGames(String authToken) {
         System.out.println("List of Games: ");
-        String response = ServerFacade.listGames(authToken);
-        if(response == null) {
-            System.out.println("No games to list.");
-        }
+        ServerFacade.listGames(authToken);
+    }
+
+    private static void joinGame() {
+        System.out.println("Enter Game Number: ");
     }
 }

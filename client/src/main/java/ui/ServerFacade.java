@@ -30,6 +30,7 @@ public class ServerFacade {
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 String authToken = conn.getHeaderField("Authorization");
+                System.out.println(EscapeSequences.ERASE_SCREEN);
                 System.out.println("Login successful");
                 return authToken;
             } else {
@@ -84,7 +85,9 @@ public class ServerFacade {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
                 System.out.println("Logout successful");
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
                 return true;
             } else {
                 String error = conn.getResponseMessage();
@@ -126,7 +129,7 @@ public class ServerFacade {
         return false;
     }
 
-    public static String listGames(String authToken) {
+    public static void listGames(String authToken) {
         try {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -145,15 +148,32 @@ public class ServerFacade {
                 }
                 reader.close();
 
-                JsonArray gamesArray = JsonParser.parseString(response.toString()).getAsJsonArray();
-                for (JsonElement gameElement : gamesArray) {
-                    JsonObject game = gameElement.getAsJsonObject();
-                    String gameName = game.get("gameName").getAsString();
-                    JsonArray playersArray = game.get("players").getAsJsonArray();
-                    System.out.println("Game: " + gameNumber + ", Game Name: " + gameName + ", Players: " + playersArray);
-                    gameNumber++;
+                JsonObject responseObject = JsonParser.parseString(response.toString()).getAsJsonObject();
+                JsonArray gamesArray = responseObject.getAsJsonArray("games");
+                if (gamesArray != null) {
+                    for (JsonElement gameElement : gamesArray) {
+                        JsonObject gameObject = gameElement.getAsJsonObject();
+                        String gameName = gameObject.get("gameName").getAsString();
+                        String whiteUsername = getStringOrNull(gameObject, "whiteUsername");
+                        String blackUsername = getStringOrNull(gameObject, "blackUsername");
+                        System.out.print("Game #: " + gameNumber + ", Game Name: " + gameName);
+                        System.out.print(", Players: ");
+                        if(whiteUsername == null) {
+                            System.out.print("White Player is Empty, ");
+                        } else {
+                            System.out.print(whiteUsername + ", ");
+                        }
+
+                        if(blackUsername == null) {
+                            System.out.println("Black Player is Empty");
+                        } else {
+                            System.out.println(blackUsername);
+                        }
+                        gameNumber++;
+                    }
+                } else {
+                    System.out.println("No games found.");
                 }
-                return response.toString();
             } else {
                 String error = conn.getResponseMessage();
                 System.out.println("Failed to list games: " + error);
@@ -161,6 +181,10 @@ public class ServerFacade {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+    }
+
+    private static String getStringOrNull(JsonObject jsonObject, String key) {
+        JsonElement element = jsonObject.get(key);
+        return element != null && !element.isJsonNull() ? element.getAsString() : null;
     }
 }
