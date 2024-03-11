@@ -165,7 +165,7 @@ public class ChessClient {
     }
 
     private static void listGames(String authToken) {
-        System.out.println("List of Games: ");
+        System.out.println("List of Games: \n");
         ServerFacade.listGames(authToken);
     }
 

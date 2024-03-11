@@ -63,6 +63,7 @@ public class ServerFacade {
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 String authToken = conn.getHeaderField("Authorization");
+                System.out.println(EscapeSequences.ERASE_SCREEN);
                 System.out.println("Registration successful!");
                 return authToken;
             } else {
@@ -142,7 +143,6 @@ public class ServerFacade {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String line;
-                int gameNumber = 0;
                 while((line = reader.readLine()) != null) {
                     response.append(line);
                 }
@@ -153,10 +153,11 @@ public class ServerFacade {
                 if (gamesArray != null) {
                     for (JsonElement gameElement : gamesArray) {
                         JsonObject gameObject = gameElement.getAsJsonObject();
+                        int gameID = gameObject.get("gameID").getAsInt();
                         String gameName = gameObject.get("gameName").getAsString();
                         String whiteUsername = getStringOrNull(gameObject, "whiteUsername");
                         String blackUsername = getStringOrNull(gameObject, "blackUsername");
-                        System.out.print("Game #: " + gameNumber + ", Game Name: " + gameName);
+                        System.out.print("Game #: " + gameID + ", Game Name: " + gameName);
                         System.out.print(", Players: ");
                         if(whiteUsername == null) {
                             System.out.print("White Player is Empty, ");
@@ -169,7 +170,6 @@ public class ServerFacade {
                         } else {
                             System.out.println(blackUsername);
                         }
-                        gameNumber++;
                     }
                 } else {
                     System.out.println("No games found.");
@@ -186,5 +186,9 @@ public class ServerFacade {
     private static String getStringOrNull(JsonObject jsonObject, String key) {
         JsonElement element = jsonObject.get(key);
         return element != null && !element.isJsonNull() ? element.getAsString() : null;
+    }
+
+    public static void joinGame (int gameID, String whiteOrBlack){
+
     }
 }
