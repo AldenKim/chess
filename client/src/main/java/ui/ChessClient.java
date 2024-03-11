@@ -69,7 +69,7 @@ public class ChessClient {
                     break;
                 case "3":
                 case "create game":
-
+                    createGame(authToken);
                     break;
                 case "4":
                 case "list games":
@@ -146,6 +146,12 @@ public class ChessClient {
     }
 
     public static void createGame(String authToken) {
+        System.out.println("\nEnter the name of the new game:");
+        String gameName = scanner.nextLine().trim();
 
+        boolean createGameSuccess = ServerFacade.createGame(authToken, gameName);
+        if (createGameSuccess) {
+            post_loginUI(authToken);
+        }
     }
 }

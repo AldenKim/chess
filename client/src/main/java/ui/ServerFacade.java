@@ -95,7 +95,33 @@ public class ServerFacade {
         return false;
     }
 
-    public static boolean createGame(String authToken) {
+    public static boolean createGame(String authToken, String gameName) {
+        try {
+            URL url = new URL(BASE_URL + "/game");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", authToken);
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
 
+            JsonObject gameData = new JsonObject();
+            gameData.addProperty("gameName", gameName);
+
+            String jsonData = new Gson().toJson(gameData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Game created successfully!");
+                return true;
+            } else {
+                String error = conn.getResponseMessage();
+                System.out.println("Failed to create game: " + error);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
