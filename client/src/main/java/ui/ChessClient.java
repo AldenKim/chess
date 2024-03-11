@@ -1,11 +1,5 @@
 package ui;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -118,35 +112,11 @@ public class ChessClient {
         System.out.print("Password: ");
         String password = scanner.nextLine().trim();
 
-        try {
-            URL url = new URL("http://localhost:8080/session");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-
-            conn.addRequestProperty("Content-type", "application/json");
-
-            JsonObject loginData = new JsonObject();
-            loginData.addProperty("username", username);
-            loginData.addProperty("password", password);
-
-            var jsonData = new Gson().toJson(loginData);
-            conn.getOutputStream().write(jsonData.getBytes());
-            conn.connect();
-
-            int responseCode = conn.getResponseCode();
-            if (responseCode == 200) {
-                String authToken = conn.getHeaderField("authorization");
-                System.out.println("Login successful");
-                System.out.println("Logged in as: " + username);
-                post_loginUI(authToken);
-                isLoggedIn = true;
-            } else {
-                String error = conn.getResponseMessage();
-                System.out.println("Login failed: " + error);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String loginSuccessAndAuth = ServerFacade.login(username, password);
+        if(loginSuccessAndAuth != null) {
+            System.out.println("\nLogged in as: " + username);
+            isLoggedIn = true;
+            post_loginUI(loginSuccessAndAuth);
         }
     }
 
@@ -159,58 +129,19 @@ public class ChessClient {
         System.out.print("Email: ");
         String email = scanner.nextLine().trim();
 
-        try {
-            URL url = new URL("http://localhost:8080/user");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-
-            conn.addRequestProperty("Content-Type", "application/json");
-
-            JsonObject registrationData = new JsonObject();
-            registrationData.addProperty("username", username);
-            registrationData.addProperty("password", password);
-            registrationData.addProperty("email", email);
-
-            var jsonData = new Gson().toJson(registrationData);
-            conn.getOutputStream().write(jsonData.getBytes());
-            conn.connect();
-
-            int responseCode = conn.getResponseCode();
-            if (responseCode == 200) {
-                String authToken = conn.getHeaderField("authorization");
-                System.out.println("Registration successful!");
-                System.out.println("Logged in as: " + username);
-                post_loginUI(authToken);
-                isLoggedIn = true;
-            } else {
-                String error = conn.getResponseMessage();
-                System.out.println("Registration failed: " + error);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String registerSuccessAndAuth = ServerFacade.register(username, password, email);
+        if(registerSuccessAndAuth!=null) {
+            System.out.println("\nLogged in as: " + username);
+            isLoggedIn = true;
+            post_loginUI(registerSuccessAndAuth);
         }
     }
 
     public static void logout(String authToken) {
-        try {
-            URL url = new URL("http://localhost:8080/session");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("DELETE");
-            conn.setRequestProperty("authorization", authToken);
-            conn.connect();
-
-            int responseCode = conn.getResponseCode();
-            if (responseCode == 200) {
-                System.out.println("Logout successful");
-                isLoggedIn = false;
-                pre_loginUI();
-            } else {
-                String error = conn.getResponseMessage();
-                System.out.println("Logout failed: " + error);
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
+        boolean logoutSuccess = ServerFacade.logout(authToken);
+        if (logoutSuccess) {
+            isLoggedIn = false;
+            pre_loginUI();
         }
     }
 
