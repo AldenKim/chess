@@ -83,6 +83,7 @@ public class ChessClient {
                     break;
                 case "5":
                 case "join game":
+                    joinGame(authToken);
                     break;
                 case "6":
                 case "join observer":
@@ -169,7 +170,12 @@ public class ChessClient {
         ServerFacade.listGames(authToken);
     }
 
-    private static void joinGame() {
+    private static void joinGame(String authToken) {
         System.out.println("Enter Game Number: ");
+        int gameNum = Integer.parseInt(scanner.nextLine());
+        System.out.println("Do you want to play as white or black?: ");
+        String userColor = scanner.nextLine();
+
+        ServerFacade.joinGame(gameNum, userColor, authToken);
     }
 }

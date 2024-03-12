@@ -34,8 +34,11 @@ public class ServerFacade {
                 System.out.println("Login successful");
                 return authToken;
             } else {
-                String error = conn.getResponseMessage();
-                System.out.println("Login failed: " + error);
+                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                String errorMessage = errorResponse.get("message").getAsString();
+
+                System.out.println(errorMessage);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,8 +70,11 @@ public class ServerFacade {
                 System.out.println("Registration successful!");
                 return authToken;
             } else {
-                String error = conn.getResponseMessage();
-                System.out.println("Registration failed: " + error);
+                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                String errorMessage = errorResponse.get("message").getAsString();
+
+                System.out.println(errorMessage);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,8 +97,11 @@ public class ServerFacade {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
                 return true;
             } else {
-                String error = conn.getResponseMessage();
-                System.out.println("Logout failed: " + error);
+                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                String errorMessage = errorResponse.get("message").getAsString();
+
+                System.out.println(errorMessage);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,8 +130,11 @@ public class ServerFacade {
                 System.out.println("Game created successfully!");
                 return true;
             } else {
-                String error = conn.getResponseMessage();
-                System.out.println("Failed to create game: " + error);
+                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                String errorMessage = errorResponse.get("message").getAsString();
+
+                System.out.println(errorMessage);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -188,7 +200,35 @@ public class ServerFacade {
         return element != null && !element.isJsonNull() ? element.getAsString() : null;
     }
 
-    public static void joinGame (int gameID, String whiteOrBlack){
+    public static void joinGame (int gameID, String whiteOrBlack, String authToken){
+        try {
+            URL url = new URL(BASE_URL + "/game");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("authorization", authToken);
+            conn.setDoOutput(true);
 
+            JsonObject joinGameData = new JsonObject();
+            joinGameData.addProperty("playerColor", whiteOrBlack.toUpperCase());
+            joinGameData.addProperty("gameID", gameID);
+
+            String jsonData = new Gson().toJson(joinGameData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Joined game successfully!");
+            } else {
+                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                String errorMessage = errorResponse.get("message").getAsString();
+
+                System.out.println(errorMessage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
