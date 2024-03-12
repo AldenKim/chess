@@ -87,6 +87,7 @@ public class ChessClient {
                     break;
                 case "6":
                 case "join observer":
+                    joinObserver(authToken);
                     break;
             }
         }
@@ -177,5 +178,12 @@ public class ChessClient {
         String userColor = scanner.nextLine();
 
         ServerFacade.joinGame(gameNum, userColor, authToken);
+    }
+
+    private static void joinObserver(String authToken) {
+        System.out.println("Enter Game Number: ");
+        int gameNum = Integer.parseInt(scanner.nextLine());
+
+        ServerFacade.joinObserver(gameNum, authToken);
     }
 }

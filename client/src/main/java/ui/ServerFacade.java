@@ -231,4 +231,35 @@ public class ServerFacade {
             e.printStackTrace();
         }
     }
+
+    public static void joinObserver (int gameID, String authToken) {
+        try {
+            URL url = new URL(BASE_URL + "/game");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Authorization", authToken);
+            conn.setDoOutput(true);
+
+            JsonObject joinObserverData = new JsonObject();
+            joinObserverData.addProperty("playerColor", "");
+            joinObserverData.addProperty("gameID", gameID);
+
+            String jsonData = new Gson().toJson(joinObserverData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Joined game as observer successfully!");
+            } else {
+                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                String errorMessage = errorResponse.get("message").getAsString();
+                System.out.println(errorMessage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
