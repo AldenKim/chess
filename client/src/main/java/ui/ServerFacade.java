@@ -200,7 +200,7 @@ public class ServerFacade {
         return element != null && !element.isJsonNull() ? element.getAsString() : null;
     }
 
-    public static void joinGame (int gameID, String whiteOrBlack, String authToken){
+    public static boolean joinGame (int gameID, String whiteOrBlack, String authToken){
         try {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -220,19 +220,22 @@ public class ServerFacade {
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 System.out.println("Joined game successfully!");
+                return true;
             } else {
                 InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
                 JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
                 String errorMessage = errorResponse.get("message").getAsString();
 
                 System.out.println(errorMessage);
+                return false;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public static void joinObserver (int gameID, String authToken) {
+    public static boolean joinObserver (int gameID, String authToken) {
         try {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -252,14 +255,17 @@ public class ServerFacade {
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 System.out.println("Joined game as observer successfully!");
+                return true;
             } else {
                 InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
                 JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
                 String errorMessage = errorResponse.get("message").getAsString();
                 System.out.println(errorMessage);
+                return false;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 }

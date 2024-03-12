@@ -89,6 +89,9 @@ public class ChessClient {
                 case "join observer":
                     joinObserver(authToken);
                     break;
+                default:
+                    System.out.println("Invalid input, Please try again.");
+                    break;
             }
         }
     }
@@ -177,13 +180,17 @@ public class ChessClient {
         System.out.println("Do you want to play as white or black?: ");
         String userColor = scanner.nextLine();
 
-        ServerFacade.joinGame(gameNum, userColor, authToken);
+        if(ServerFacade.joinGame(gameNum, userColor, authToken)) {
+            GameUI.run();
+        }
     }
 
     private static void joinObserver(String authToken) {
         System.out.println("Enter Game Number: ");
         int gameNum = Integer.parseInt(scanner.nextLine());
 
-        ServerFacade.joinObserver(gameNum, authToken);
+        if(ServerFacade.joinObserver(gameNum, authToken)) {
+            GameUI.run();
+        }
     }
 }
