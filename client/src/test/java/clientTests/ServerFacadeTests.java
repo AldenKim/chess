@@ -55,40 +55,48 @@ public class ServerFacadeTests {
     @Test
     public void positiveLoginTest() {
         String authToken = facade.register("validUsername", "validPassword", "validEmail");
-        Assertions.assertNotNull(authToken, "Authentication token should not be null after user registration.");
+        Assertions.assertNotNull(authToken);
+
+        boolean logoutSuccess = facade.logout(authToken);
+        Assertions.assertTrue(logoutSuccess);
 
         authToken = facade.login("validUsername", "validPassword");
-        Assertions.assertNotNull(authToken, "Authentication token should not be null for a valid login.");
+        Assertions.assertNotNull(authToken);
     }
 
     @Test
     public void negativeLoginTest() {
         String authToken = facade.login("invalid", "invalidPassword");
-        Assertions.assertNull(authToken, "Authentication token should be null for an invalid login.");
+        Assertions.assertNull(authToken);
     }
 
     @Test
     public void positiveRegisterTest() {
         String authToken = facade.register("validUsername", "validPassword", "validEmail");
-        Assertions.assertNotNull(authToken, "Authentication token should not be null after user registration.");
+        Assertions.assertNotNull(authToken);
     }
 
     @Test
     public void negativeRegisterTest() {
         String authToken = facade.register("existing", "existing", "validEmail");
-        Assertions.assertNotNull(authToken, "Authentication token should not be null after user registration.");
+        Assertions.assertNotNull(authToken);
 
         authToken = facade.register("existing", "existing", "validEmail");
-        Assertions.assertNull(authToken, "Authentication token should be null for registration with existing username.");
+        Assertions.assertNull(authToken);
     }
 
     @Test
     public void positiveLogoutTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken);
 
+        boolean logoutSuccess = facade.logout(authToken);
+        Assertions.assertTrue(logoutSuccess);
     }
 
     @Test
     public void negativeLogoutTest() {
-
+        boolean logoutSuccess = facade.logout("invalidAuthToken");
+        Assertions.assertFalse(logoutSuccess);
     }
 }
