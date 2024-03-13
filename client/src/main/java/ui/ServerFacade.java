@@ -7,11 +7,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServerFacade {
     private static final String BASE_URL = "http://localhost:8080";
-
-    public ServerFacade() { }
+    private Map<Integer, Integer> gameNumberToIdMap;
+    public ServerFacade() {
+        this.gameNumberToIdMap = new HashMap<>();
+    }
 
     public String login(String username, String password) {
         try {
@@ -165,13 +169,16 @@ public class ServerFacade {
                 JsonObject responseObject = JsonParser.parseString(response.toString()).getAsJsonObject();
                 JsonArray gamesArray = responseObject.getAsJsonArray("games");
                 if (gamesArray != null) {
+                    int gameNumbered = 1;
+                    gameNumberToIdMap.clear();
                     for (JsonElement gameElement : gamesArray) {
                         JsonObject gameObject = gameElement.getAsJsonObject();
                         int gameID = gameObject.get("gameID").getAsInt();
                         String gameName = gameObject.get("gameName").getAsString();
                         String whiteUsername = getStringOrNull(gameObject, "whiteUsername");
                         String blackUsername = getStringOrNull(gameObject, "blackUsername");
-                        System.out.print("Game #: " + gameID + ", Game Name: " + gameName);
+                        gameNumberToIdMap.put(gameNumbered, gameID);
+                        System.out.print("Game #: " + gameNumbered + ", Game Name: " + gameName);
                         System.out.print(", Players: ");
                         if(whiteUsername == null) {
                             System.out.print("White Player is Empty, ");
@@ -184,6 +191,7 @@ public class ServerFacade {
                         } else {
                             System.out.println(blackUsername);
                         }
+                        gameNumbered++;
                     }
                 } else {
                     System.out.println("No games found.");
@@ -213,7 +221,11 @@ public class ServerFacade {
 
             JsonObject joinGameData = new JsonObject();
             joinGameData.addProperty("playerColor", whiteOrBlack.toUpperCase());
-            joinGameData.addProperty("gameID", gameID);
+            int actualGameId = -1;
+            if(gameNumberToIdMap.get(gameID) != null) {
+                actualGameId = gameNumberToIdMap.get(gameID);
+            }
+            joinGameData.addProperty("gameID", actualGameId);
 
             String jsonData = new Gson().toJson(joinGameData);
             conn.getOutputStream().write(jsonData.getBytes());
@@ -248,7 +260,11 @@ public class ServerFacade {
 
             JsonObject joinObserverData = new JsonObject();
             joinObserverData.addProperty("playerColor", "");
-            joinObserverData.addProperty("gameID", gameID);
+            int actualGameId = -1;
+            if(gameNumberToIdMap.get(gameID) != null) {
+                actualGameId = gameNumberToIdMap.get(gameID);
+            }
+            joinObserverData.addProperty("gameID", actualGameId);
 
             String jsonData = new Gson().toJson(joinObserverData);
             conn.getOutputStream().write(jsonData.getBytes());

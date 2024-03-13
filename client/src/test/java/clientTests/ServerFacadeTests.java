@@ -140,4 +140,50 @@ public class ServerFacadeTests {
 
         Assertions.assertTrue(printedMessage.contains("Failed"));
     }
+
+    @Test
+    public void positiveJoinGameTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken);
+
+        boolean gameCreationSuccess = facade.createGame(authToken, "Test");
+        Assertions.assertTrue(gameCreationSuccess);
+
+        facade.listGames(authToken);
+
+        boolean joinGameSuccess = facade.joinGame(1, "WHITE", authToken);
+        Assertions.assertTrue(joinGameSuccess);
+    }
+
+    @Test
+    public void negativeJoinGameTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken);
+
+        boolean joinGameSuccess = facade.joinGame(1000, "white", "invalidAuthToken");
+        Assertions.assertFalse(joinGameSuccess);
+    }
+
+    @Test
+    public void positiveJoinObserverTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken);
+
+        boolean gameCreationSuccess = facade.createGame(authToken, "Test1");
+        Assertions.assertTrue(gameCreationSuccess);
+
+        facade.listGames(authToken);
+
+        boolean joinGameSuccess = facade.joinObserver(1, authToken);
+        Assertions.assertTrue(joinGameSuccess);
+    }
+
+    @Test
+    public void negativeJoinObserverTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken);
+
+        boolean joinGameSuccess = facade.joinObserver(1000, "invalidAuthToken");
+        Assertions.assertFalse(joinGameSuccess);
+    }
 }
