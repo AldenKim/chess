@@ -54,6 +54,41 @@ public class ServerFacadeTests {
 
     @Test
     public void positiveLoginTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken, "Authentication token should not be null after user registration.");
+
+        authToken = facade.login("validUsername", "validPassword");
+        Assertions.assertNotNull(authToken, "Authentication token should not be null for a valid login.");
+    }
+
+    @Test
+    public void negativeLoginTest() {
+        String authToken = facade.login("invalid", "invalidPassword");
+        Assertions.assertNull(authToken, "Authentication token should be null for an invalid login.");
+    }
+
+    @Test
+    public void positiveRegisterTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken, "Authentication token should not be null after user registration.");
+    }
+
+    @Test
+    public void negativeRegisterTest() {
+        String authToken = facade.register("existing", "existing", "validEmail");
+        Assertions.assertNotNull(authToken, "Authentication token should not be null after user registration.");
+
+        authToken = facade.register("existing", "existing", "validEmail");
+        Assertions.assertNull(authToken, "Authentication token should be null for registration with existing username.");
+    }
+
+    @Test
+    public void positiveLogoutTest() {
+
+    }
+
+    @Test
+    public void negativeLogoutTest() {
 
     }
 }
