@@ -59,7 +59,9 @@ public class ChessClient {
         System.out.println("5. Join Game");
         System.out.println("6. Join Observer");
 
-        while(true) {
+        boolean postLoginLoop = true;
+
+        while(postLoginLoop) {
             System.out.println();
             System.out.print(LOGGED_IN_PREFIX);
             String userInput = scanner.nextLine().toLowerCase();
@@ -84,10 +86,12 @@ public class ChessClient {
                 case "5":
                 case "join game":
                     joinGame(authToken);
+                    postLoginLoop = false;
                     break;
                 case "6":
                 case "join observer":
                     joinObserver(authToken);
+                    postLoginLoop = false;
                     break;
                 default:
                     System.out.println("Invalid input, Please try again.");
