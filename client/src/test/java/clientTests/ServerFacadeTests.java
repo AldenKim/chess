@@ -7,8 +7,10 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -98,5 +100,44 @@ public class ServerFacadeTests {
     public void negativeLogoutTest() {
         boolean logoutSuccess = facade.logout("invalidAuthToken");
         Assertions.assertFalse(logoutSuccess);
+    }
+
+    @Test
+    public void positiveCreateGameTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken);
+
+        boolean gameCreationSuccess = facade.createGame(authToken, "TestGame");
+        Assertions.assertTrue(gameCreationSuccess);
+    }
+
+    @Test
+    public void negativeCreateGameTest() {
+        boolean gameCreationSuccess = facade.createGame("invalidAuthToken", "TestGame");
+        Assertions.assertFalse(gameCreationSuccess, "Game creation should fail without a valid authentication token.");
+    }
+
+    @Test
+    public void positiveListGamesTest() {
+        String authToken = facade.register("validUsername", "validPassword", "validEmail");
+        Assertions.assertNotNull(authToken);
+
+        facade.createGame(authToken, "TestGame"); // Creating a game for testing purposes
+        facade.listGames(authToken);
+        Assertions.assertDoesNotThrow(() -> facade.listGames(authToken));
+    }
+
+    @Test
+    public void negativeListGamesTest() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        facade.listGames("invalidAuthToken");
+
+        System.setOut(System.out);
+
+        String printedMessage = outputStream.toString();
+
+        Assertions.assertTrue(printedMessage.contains("Failed"));
     }
 }
