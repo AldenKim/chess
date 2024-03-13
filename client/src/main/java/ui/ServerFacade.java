@@ -11,7 +11,9 @@ import java.net.URL;
 public class ServerFacade {
     private static final String BASE_URL = "http://localhost:8080";
 
-    public static String login(String username, String password) {
+    public ServerFacade() { }
+
+    public String login(String username, String password) {
         try {
             URL url = new URL(BASE_URL + "/session");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -46,7 +48,7 @@ public class ServerFacade {
         return null;
     }
 
-    public static String register(String username, String password, String email) {
+    public String register(String username, String password, String email) {
         try {
             URL url = new URL(BASE_URL + "/user");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -82,7 +84,7 @@ public class ServerFacade {
         return null;
     }
 
-    public static boolean logout(String authToken) {
+    public boolean logout(String authToken) {
         try {
             URL url = new URL(BASE_URL + "/session");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -109,7 +111,7 @@ public class ServerFacade {
         return false;
     }
 
-    public static boolean createGame(String authToken, String gameName) {
+    public boolean createGame(String authToken, String gameName) {
         try {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -142,7 +144,7 @@ public class ServerFacade {
         return false;
     }
 
-    public static void listGames(String authToken) {
+    public void listGames(String authToken) {
         try {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -200,7 +202,7 @@ public class ServerFacade {
         return element != null && !element.isJsonNull() ? element.getAsString() : null;
     }
 
-    public static boolean joinGame (int gameID, String whiteOrBlack, String authToken){
+    public boolean joinGame (int gameID, String whiteOrBlack, String authToken){
         try {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -235,7 +237,7 @@ public class ServerFacade {
         return false;
     }
 
-    public static boolean joinObserver (int gameID, String authToken) {
+    public boolean joinObserver (int gameID, String authToken) {
         try {
             URL url = new URL(BASE_URL + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

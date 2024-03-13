@@ -99,11 +99,4 @@ public class GameUI {
         }
         return textColor;
     }
-
-    public static void main(String[] args) {
-        testBoard.resetBoard();
-        displayChessBoardFromWhite();
-        System.out.println();
-        displayChessBoardFromBlack();
-    }
 }
