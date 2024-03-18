@@ -18,12 +18,14 @@ public class ServerFacadeTests {
 
     private static Server server;
     static ServerFacade facade;
+    static int portNumb;
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade();
+        facade = new ServerFacade(port);
+        portNumb = port;
     }
 
     @AfterAll
@@ -34,7 +36,7 @@ public class ServerFacadeTests {
     @BeforeEach
     public void clearDatabase() {
         try {
-            URL url = new URL("http://localhost:8080" + "/db");
+            URL url = new URL("http://localhost:"+ portNumb + "/db");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
             conn.connect();

@@ -11,15 +11,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFacade {
-    private static final String BASE_URL = "http://localhost:8080";
+    private static final String BASE_URL = "http://localhost:";
+    private int portNumb;
     private Map<Integer, Integer> gameNumberToIdMap;
-    public ServerFacade() {
+    public ServerFacade(int port) {
         this.gameNumberToIdMap = new HashMap<>();
+        this.portNumb = port;
     }
 
     public String login(String username, String password) {
         try {
-            URL url = new URL(BASE_URL + "/session");
+            URL url = new URL(BASE_URL + portNumb + "/session");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
@@ -54,7 +56,7 @@ public class ServerFacade {
 
     public String register(String username, String password, String email) {
         try {
-            URL url = new URL(BASE_URL + "/user");
+            URL url = new URL(BASE_URL +portNumb+ "/user");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
@@ -90,7 +92,7 @@ public class ServerFacade {
 
     public boolean logout(String authToken) {
         try {
-            URL url = new URL(BASE_URL + "/session");
+            URL url = new URL(BASE_URL +portNumb+ "/session");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
             conn.setRequestProperty("Authorization", authToken);
@@ -117,7 +119,7 @@ public class ServerFacade {
 
     public boolean createGame(String authToken, String gameName) {
         try {
-            URL url = new URL(BASE_URL + "/game");
+            URL url = new URL(BASE_URL + portNumb + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("authorization", authToken);
@@ -150,7 +152,7 @@ public class ServerFacade {
 
     public void listGames(String authToken) {
         try {
-            URL url = new URL(BASE_URL + "/game");
+            URL url = new URL(BASE_URL +portNumb+ "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("authorization", authToken);
@@ -212,7 +214,7 @@ public class ServerFacade {
 
     public boolean joinGame (int gameID, String whiteOrBlack, String authToken){
         try {
-            URL url = new URL(BASE_URL + "/game");
+            URL url = new URL(BASE_URL +portNumb+ "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("PUT");
             conn.setRequestProperty("Content-Type", "application/json");
@@ -251,7 +253,7 @@ public class ServerFacade {
 
     public boolean joinObserver (int gameID, String authToken) {
         try {
-            URL url = new URL(BASE_URL + "/game");
+            URL url = new URL(BASE_URL+ portNumb + "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("PUT");
             conn.setRequestProperty("Content-Type", "application/json");

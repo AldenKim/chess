@@ -7,7 +7,7 @@ public class ChessClient {
     private static final String LOGGED_OUT_PREFIX = "[LOGGED-OUT] >>> ";
     private static final String LOGGED_IN_PREFIX = "[LOGGED-IN] >>> ";
     private static boolean isLoggedIn = false;
-    private static final ServerFacade facade = new ServerFacade();
+    private static final ServerFacade facade = new ServerFacade(8080);
 
     public ChessClient() {
         pre_loginUI();
