@@ -2,7 +2,6 @@ package clientTests;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dataAccess.AuthDAO;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
