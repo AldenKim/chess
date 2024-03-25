@@ -5,13 +5,65 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
+import java.util.Scanner;
+
 public class GameUI {
     private static ChessBoard testBoard = new ChessBoard();
+    private static Scanner scanner = new Scanner(System.in);
+    private static final String IN_GAME_PREFIX = "[IN-GAME] >>> ";
     public static void run() {
         testBoard.resetBoard();
         displayChessBoardFromWhite();
         System.out.println();
         displayChessBoardFromBlack();
+
+        boolean running = true;
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+        while (running) {
+            System.out.println("\nOptions:");
+            System.out.println("1. Help");
+            System.out.println("2. Redraw Chess Board");
+            System.out.println("3. Leave");
+            System.out.println("4. Make Move");
+            System.out.println("5. Resign");
+            System.out.println("6. Highlight Legal Moves");
+
+            System.out.print(IN_GAME_PREFIX);
+            String userInput = scanner.nextLine().toLowerCase();
+
+            switch (userInput) {
+                case "1":
+                case "help":
+                    displayHelpText();
+                    break;
+                case "2":
+                case "redraw":
+                    break;
+                case "3":
+                case "leave":
+                    break;
+                case "4":
+                case "move":
+                    break;
+                case "5":
+                case "resign":
+                    break;
+                case "6":
+                case "legal moves":
+                    break;
+            }
+        }
+
+    }
+
+    private static void displayHelpText() {
+        System.out.println("Help - Possible commands");
+        System.out.println("Redraw - Reprint the Chess Board");
+        System.out.println("Leave - Exit Game, quit playing chess");
+        System.out.println("Move - Make a move if it is your turn");
+        System.out.println("Resign - Surrender the game");
+        System.out.println("Legal Moves - Enter a piece and show where it can move");
     }
 
     private static void displayChessBoardFromWhite() {
