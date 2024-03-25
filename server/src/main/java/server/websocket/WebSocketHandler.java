@@ -14,10 +14,12 @@ public class WebSocketHandler {
         String gameIDString = session.getRequestParameterMap().get("gameID").get(0);
         int gameID = Integer.parseInt(gameIDString);
 
-        sessionManager.addSessionToGame(gameID, session.getId(), session);
+        String authToken = (String) session.getUserProperties().get("authToken");
+
+        sessionManager.addSessionToGame(gameID, authToken, session);
 
         String notificationMessage = "A player joined the game.";
-        broadcastMessage(gameID, notificationMessage, session.getId());
+        broadcastMessage(gameID, notificationMessage, authToken);
     }
 
     public void sendMessage(int gameID, String message, String authToken) {
