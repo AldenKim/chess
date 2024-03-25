@@ -1,5 +1,9 @@
 package server.websocket;
 
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
@@ -13,13 +17,34 @@ public class WebSocketHandler {
     public void onWebSocketConnect(Session session) {
         String gameIDString = session.getRequestParameterMap().get("gameID").get(0);
         int gameID = Integer.parseInt(gameIDString);
-
         String authToken = (String) session.getUserProperties().get("authToken");
 
         sessionManager.addSessionToGame(gameID, authToken, session);
 
         String notificationMessage = "A player joined the game.";
         broadcastMessage(gameID, notificationMessage, authToken);
+    }
+
+    @OnWebSocketClose
+    public void onClose(Session session) {
+        String gameIDString = session.getRequestParameterMap().get("gameID").get(0);
+        int gameID = Integer.parseInt(gameIDString);
+        String authToken = (String) session.getUserProperties().get("authToken");
+
+        sessionManager.removeSessionFromGame(gameID, authToken);
+
+        String notificationMessage = "A player left the game.";
+        broadcastMessage(gameID, notificationMessage, authToken);
+    }
+
+    @OnWebSocketError
+    public void onError(Throwable throwable) {
+        System.err.println("WebSocket error occurred: " + throwable.getMessage());
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String string) {
+
     }
 
     public void sendMessage(int gameID, String message, String authToken) {
