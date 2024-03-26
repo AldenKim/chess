@@ -1,8 +1,10 @@
 package server.websocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -12,6 +14,7 @@ import java.util.Map;
 @ServerEndpoint("/websocket")
 public class WebSocketHandler {
     private WebSocketSessions sessionManager = new WebSocketSessions();
+    private GameService gameService = new GameService();
 
     @OnOpen
     public void onWebSocketConnect(Session session) {
@@ -44,7 +47,19 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String string) {
+        UserGameCommand userGameCommand = new Gson().fromJson(string, UserGameCommand.class);
 
+        switch (userGameCommand.getCommandType()) {
+            case JOIN_PLAYER:
+                break;
+            case JOIN_OBSERVER:
+                break;
+            case MAKE_MOVE:
+                break;
+            case LEAVE:
+                break;
+            case RESIGN:
+        }
     }
 
     public void sendMessage(int gameID, String message, String authToken) {
