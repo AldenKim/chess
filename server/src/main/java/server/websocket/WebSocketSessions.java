@@ -1,6 +1,11 @@
 package server.websocket;
 
+import com.google.gson.Gson;
+import webSocketMessages.serverMessages.ServerMessage;
+
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,5 +41,35 @@ public class WebSocketSessions {
 
     public Map<String, Session> getSessionsForGame(int gameID) {
         return sessionMap.get(gameID);
+    }
+
+    public void sendMessage(int gameID, ServerMessage message, String authToken) {
+        Map<String, Session> gameSessions = sessionMap.get(gameID);
+        Session targetSession = gameSessions.get(authToken);
+        if(targetSession != null && targetSession.isOpen()) {
+            sendToSession(targetSession, message);
+        }
+    }
+
+    public void broadcastMessage(int gameID, ServerMessage message, String exceptThisAuthToken) {
+        Map<String, Session> gameSessions = sessionMap.get(gameID);
+        for (Map.Entry<String, Session> entry : gameSessions.entrySet()) {
+            String authToken = entry.getKey();
+            if(!authToken.equals(exceptThisAuthToken)) {
+                Session targetSession = entry.getValue();
+                if(targetSession.isOpen()) {
+                    sendToSession(targetSession, message);
+                }
+            }
+        }
+    }
+
+    private void sendToSession(Session session, ServerMessage message) {
+        RemoteEndpoint.Basic remote = session.getBasicRemote();
+        try {
+            remote.sendText(new Gson().toJson(message));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 }

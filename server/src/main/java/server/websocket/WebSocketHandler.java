@@ -1,82 +1,59 @@
 package server.websocket;
 
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import dataAccess.DataAccessException;
+import org.eclipse.jetty.websocket.api.annotations.*;
+import service.CreateGameService;
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinPlayerCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
-import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.Map;
 
-@ServerEndpoint("/websocket")
+@WebSocket
 public class WebSocketHandler {
     private WebSocketSessions sessionManager = new WebSocketSessions();
+    private final GameService gameService;
+    private final Gson gson;
+    public WebSocketHandler(GameService gameService) {
+        this.gameService = gameService;
+        this.gson = new Gson();
+    }
 
-    @OnOpen
-    public void onWebSocketConnect(Session session) {
-
+    @OnWebSocketConnect
+    public void onConnect(Session session) {
+        System.out.println("New session connected: " + session.getId());
     }
 
     @OnWebSocketClose
     public void onClose(Session session) {
-
+        System.out.println("Session closed: " + session.getId());
     }
 
     @OnWebSocketError
-    public void onError(Throwable throwable) {
-
+    public void onError(Session session, Throwable throwable) {
+        System.err.println("Error occurred in session: " + session.getId());
+        throwable.printStackTrace();
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String string) {
-        UserGameCommand userGameCommand = new Gson().fromJson(string, UserGameCommand.class);
-
-        switch (userGameCommand.getCommandType()) {
+    public void onMessage(Session session, String message) throws IOException {
+        UserGameCommand gameCommand = new Gson().fromJson(message, UserGameCommand.class);
+        switch(gameCommand.getCommandType()) {
             case JOIN_PLAYER:
-                break;
-            case JOIN_OBSERVER:
-                break;
-            case MAKE_MOVE:
-                break;
-            case LEAVE:
-                break;
-            case RESIGN:
-        }
-    }
-
-    public void sendMessage(int gameID, ServerMessage message, String authToken) {
-        Map<String, Session> gameSessions = sessionManager.getSessionsForGame(gameID);
-        Session targetSession = gameSessions.get(authToken);
-
-        if (targetSession != null && targetSession.isOpen()) {
-            try {
-                String jsonMessage = new Gson().toJson(message);
-                targetSession.getBasicRemote().sendText(jsonMessage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void broadcastMessage(int gameID, ServerMessage message, String exceptThisAuthToken) {
-        Map<String, Session> gameSessions = sessionManager.getSessionsForGame(gameID);
-
-        for(Map.Entry<String, Session> entry : gameSessions.entrySet()) {
-            String authToken = entry.getKey();
-            Session targetSession = entry.getValue();
-
-            if(!authToken.equals(exceptThisAuthToken) && targetSession.isOpen()) {
+                JoinPlayerCommand joinPlayerCommand = gson.fromJson(message, JoinPlayerCommand.class);
                 try {
-                    String jsonMessage = new Gson().toJson(message);
-                    targetSession.getBasicRemote().sendText(jsonMessage);
-                } catch (Exception e) {
+                    gameService.joinPlayer(gameCommand.getAuthString(), joinPlayerCommand);
+                } catch (DataAccessException e) {
                     e.printStackTrace();
                 }
-            }
+                break;
+            case JOIN_OBSERVER:
+
         }
     }
 }
