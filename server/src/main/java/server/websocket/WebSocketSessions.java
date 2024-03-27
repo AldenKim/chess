@@ -1,7 +1,5 @@
 package server.websocket;
 
-
-
 import javax.websocket.Session;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +7,6 @@ import java.util.Set;
 
 public class WebSocketSessions {
     private static final Map<Integer, Map<String, Session>> sessionMap = new HashMap<>();
-
 
     public void addSessionToGame(int gameID, String authToken, Session session) {
         Map<String, Session> gameSessions = sessionMap.computeIfAbsent(gameID, k -> new HashMap<>());
