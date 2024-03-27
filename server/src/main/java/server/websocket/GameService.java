@@ -5,10 +5,10 @@ import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.UserDAO;
+import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
-import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayerCommand;
 
 
@@ -18,20 +18,25 @@ public class GameService {
     private final UserDAO userDAO;
     private final WebSocketSessions webSocketSessions;
 
-    public GameService(GameDAO gameDAO, AuthDAO authDAO, UserDAO userDAO,WebSocketSessions webSocketSessions) {
+    public GameService(GameDAO gameDAO, AuthDAO authDAO, UserDAO userDAO) {
         this.gameDAO = gameDAO;
         this.authDAO = authDAO;
         this.userDAO = userDAO;
-        this.webSocketSessions = webSocketSessions;
+        this.webSocketSessions = new WebSocketSessions();
     }
 
-    public void joinPlayer(String authToken, JoinPlayerCommand joinPlayerCommand) throws DataAccessException {
+    public void joinPlayer(String authToken, JoinPlayerCommand joinPlayerCommand, Session session) throws DataAccessException {
         try {
+            webSocketSessions.addSessionToGame(joinPlayerCommand.getGameID(), joinPlayerCommand.getAuthString(), session);
+
             if(!isValidAuthToken(authToken)) {
                 webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
             }
 
             int gameID = joinPlayerCommand.getGameID();
+            if(gameDAO.getGame(gameID) == null) {
+                webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
+            }
             ChessGame game = gameDAO.getGame(gameID).game();
             LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
 

@@ -1,10 +1,10 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
+import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
 
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,9 +65,9 @@ public class WebSocketSessions {
     }
 
     private void sendToSession(Session session, ServerMessage message) {
-        RemoteEndpoint.Basic remote = session.getBasicRemote();
+        RemoteEndpoint remote = session.getRemote();
         try {
-            remote.sendText(new Gson().toJson(message));
+            remote.sendString(new Gson().toJson(message));
         } catch(IOException e) {
             e.printStackTrace();
         }

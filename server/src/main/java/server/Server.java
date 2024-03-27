@@ -2,6 +2,8 @@ package server;
 
 import dataAccess.*;
 import handlers.*;
+import server.websocket.GameService;
+import server.websocket.WebSocketHandler;
 import service.*;
 import spark.*;
 
@@ -26,6 +28,9 @@ public class Server {
             authDAO = new MemoryAuthDAO();
             gameDAO = new MemoryGameDAO();
         }
+
+        WebSocketHandler webSocketHandler = new WebSocketHandler(new GameService(gameDAO, authDAO, userDAO));
+        Spark.webSocket("/connect", webSocketHandler);
 
         RegisterHandler registerHandler = new RegisterHandler(new RegisterService(userDAO, authDAO));
         Spark.post("/user", registerHandler::register);
