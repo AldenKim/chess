@@ -11,6 +11,8 @@ import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.userCommands.JoinPlayerCommand;
 
+import java.util.Objects;
+
 
 public class GameService {
     private final AuthDAO authDAO;
@@ -31,23 +33,29 @@ public class GameService {
 
             if(!isValidAuthToken(authToken)) {
                 webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
+                return;
             }
 
             int gameID = joinPlayerCommand.getGameID();
             if(gameDAO.getGame(gameID) == null) {
                 webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
+                return;
             }
             ChessGame game = gameDAO.getGame(gameID).game();
+            ChessGame.TeamColor playerColor = joinPlayerCommand.getPlayerColor();
             LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
 
-            String userName = joinPlayerCommand.getPlayerColor() == ChessGame.TeamColor.WHITE ? gameDAO.getGame(gameID).whiteUsername() : gameDAO.getGame(gameID).blackUsername();
+            String userName = playerColor == ChessGame.TeamColor.WHITE ? gameDAO.getGame(gameID).whiteUsername() : gameDAO.getGame(gameID).blackUsername();
+            if(!Objects.equals(userName, authDAO.getAuth(authToken).username())) {
+                webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Wrong Color"), authToken);
+                return;
+            }
 
-            String color = joinPlayerCommand.getPlayerColor() == ChessGame.TeamColor.WHITE ? "White" : "Black";
+            String color = playerColor == ChessGame.TeamColor.WHITE ? "White" : "Black";
 
             NotificationMessage notification = new NotificationMessage(userName + " joined as color " + color);
 
             webSocketSessions.sendMessage(gameID, notificationToRootClient, authToken);
-
             webSocketSessions.broadcastMessage(gameID, notification, authToken);
         } catch (DataAccessException e){
             throw e;
