@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
+import webSocketMessages.userCommands.JoinObserverCommand;
 import webSocketMessages.userCommands.JoinPlayerCommand;
 
 import java.util.Objects;
@@ -58,6 +59,34 @@ public class GameService {
             webSocketSessions.sendMessage(gameID, notificationToRootClient, authToken);
             webSocketSessions.broadcastMessage(gameID, notification, authToken);
         } catch (DataAccessException e){
+            throw e;
+        }
+    }
+
+    public void joinObserver(String authToken, JoinObserverCommand joinObserverCommand, Session session) throws DataAccessException {
+        try {
+            webSocketSessions.addSessionToGame(joinObserverCommand.getGameID(), joinObserverCommand.getAuthString(), session);
+
+            if(!isValidAuthToken(authToken)) {
+                webSocketSessions.sendMessage(joinObserverCommand.getGameID(), new ErrorMessage("Error joining: Unauthorized"), authToken);
+                return;
+            }
+
+            int gameID = joinObserverCommand.getGameID();
+            if(gameDAO.getGame(gameID) == null) {
+                webSocketSessions.sendMessage(joinObserverCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
+                return;
+            }
+            ChessGame game = gameDAO.getGame(gameID).game();
+            LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
+
+            String userName = authDAO.getAuth(authToken).username();
+
+            NotificationMessage notification = new NotificationMessage(userName + " joined as observer.");
+
+            webSocketSessions.sendMessage(gameID, notificationToRootClient, authToken);
+            webSocketSessions.broadcastMessage(gameID, notification, authToken);
+        } catch (DataAccessException e) {
             throw e;
         }
     }
