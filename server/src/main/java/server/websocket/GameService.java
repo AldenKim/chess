@@ -1,9 +1,6 @@
 package server.websocket;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
+import chess.*;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
@@ -106,21 +103,34 @@ public class GameService {
                 return;
             }
 
+            String userName = authDAO.getAuth(authToken).username();
             int gameID = makeMoveCommand.getGameID();
             ChessGame game = gameDAO.getGame(gameID).game();
             ChessMove move = makeMoveCommand.getMove();
+            ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
+            ChessGame.TeamColor userColor = null;
+
+            if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName)) {
+                userColor = ChessGame.TeamColor.WHITE;
+            } else if (Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)){
+                userColor = ChessGame.TeamColor.BLACK;
+            }
 
             try {
                 game.makeMove(move);
             } catch (InvalidMoveException e) {
                 webSocketSessions.sendMessage(gameID, new ErrorMessage("Invalid move."), authToken);
+                return;
+            }
+
+            if(piece.getTeamColor() != userColor) {
+                webSocketSessions.sendMessage(gameID, new ErrorMessage("Cannot move that piece."), authToken);
+                return;
             }
 
             gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
 
             LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
-
-            String userName = authDAO.getAuth(authToken).username();
 
             NotificationMessage notification = new NotificationMessage(userName + " moved to " + positionToString(makeMoveCommand.getMove().getEndPosition()));
 
