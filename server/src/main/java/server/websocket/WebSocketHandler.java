@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import webSocketMessages.userCommands.JoinObserverCommand;
-import webSocketMessages.userCommands.JoinPlayerCommand;
-import webSocketMessages.userCommands.MakeMoveCommand;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 
@@ -61,6 +58,14 @@ public class WebSocketHandler {
                 MakeMoveCommand makeMoveCommand = gson.fromJson(message, MakeMoveCommand.class);
                 try {
                     gameService.makeMove(gameCommand.getAuthString(), makeMoveCommand, session);
+                } catch (DataAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case LEAVE:
+                LeaveCommand leaveCommand = gson.fromJson(message, LeaveCommand.class);
+                try {
+                    gameService.leaveGame(gameCommand.getAuthString(), leaveCommand, session);
                 } catch (DataAccessException e) {
                     e.printStackTrace();
                 }

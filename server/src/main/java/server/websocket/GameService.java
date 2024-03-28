@@ -13,6 +13,7 @@ import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinObserverCommand;
 import webSocketMessages.userCommands.JoinPlayerCommand;
+import webSocketMessages.userCommands.LeaveCommand;
 import webSocketMessages.userCommands.MakeMoveCommand;
 
 import java.util.Objects;
@@ -140,6 +141,30 @@ public class GameService {
         } catch (DataAccessException e) {
             throw e;
         }
+    }
+
+    public void leaveGame(String authToken, LeaveCommand leaveCommand, Session session) throws DataAccessException {
+       try {
+           webSocketSessions.addSessionToGame(leaveCommand.getGameID(), leaveCommand.getAuthString(), session);
+
+           if(!isValidAuthToken(authToken)) {
+               webSocketSessions.sendMessage(leaveCommand.getGameID(), new ErrorMessage("Error: Unauthorized"), authToken);
+               return;
+           }
+
+           String userName = authDAO.getAuth(authToken).username();
+           int gameID = leaveCommand.getGameID();
+           if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName)) {
+               gameDAO.updateGame(gameID, new GameData(gameID, "", gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
+           } else if (Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)){
+               gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), "", gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
+           }
+           webSocketSessions.removeSessionFromGame(gameID, authToken);
+           NotificationMessage notification = new NotificationMessage(userName + " has left the game.");
+           webSocketSessions.broadcastMessage(gameID, notification, authToken);
+       } catch (DataAccessException e) {
+           throw e;
+       }
     }
 
     private boolean isValidAuthToken(String authToken) throws DataAccessException {
