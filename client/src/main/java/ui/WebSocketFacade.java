@@ -2,25 +2,35 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import com.google.gson.Gson;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
+import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class WebSocketFacade extends Endpoint implements MessageHandler{
+public class WebSocketFacade extends Endpoint {
 
     Session session;
     MessageHandler messageHandler;
 
-    public WebSocketFacade(String url) {
+    public WebSocketFacade(String url, MessageHandler messageHandler) {
         try {
             URI uri = new URI(url.replace("http", "ws") + "/connect");
+            this.messageHandler = messageHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(this, uri);
+            this.session = container.connectToServer(this, uri);
+
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String message) {
+
+                }
+            });
         } catch (URISyntaxException | DeploymentException | IOException e) {
             e.printStackTrace();
         }
@@ -28,11 +38,6 @@ public class WebSocketFacade extends Endpoint implements MessageHandler{
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig){
-    }
-
-    @Override
-    public void handleMessage(NotificationMessage message) {
-        System.out.println(message.getMessage());
     }
 
     public void joinPlayer(String authToken, int gameID, ChessGame.TeamColor teamColor) {

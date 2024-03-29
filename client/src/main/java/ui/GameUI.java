@@ -4,11 +4,14 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.NotificationMessage;
 
 import java.util.Scanner;
 
-public class GameUI {
-    private static ChessBoard testBoard = new ChessBoard();
+public class GameUI implements GameHandler{
+    private static ChessGame game = new ChessGame();
+    private static ChessBoard testBoard = game.getBoard();
     private static Scanner scanner = new Scanner(System.in);
     private static final String IN_GAME_PREFIX = "[IN-GAME] >>> ";
     public static void run() {
@@ -150,5 +153,21 @@ public class GameUI {
             textColor = EscapeSequences.SET_TEXT_COLOR_RED;
         }
         return textColor;
+    }
+
+    @Override
+    public void updateGame(LoadGameMessage game) {
+        Object updatedGame = game.getGame();
+        if (updatedGame instanceof ChessGame) {
+            this.game = (ChessGame) updatedGame;
+            this.testBoard = ((ChessGame) updatedGame).getBoard();
+        } else {
+            System.out.println("Invalid game type received.");
+        }
+    }
+
+    @Override
+    public void printMessage(NotificationMessage message) {
+        System.out.println(message.getMessage());
     }
 }
