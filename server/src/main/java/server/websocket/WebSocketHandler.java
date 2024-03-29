@@ -70,6 +70,14 @@ public class WebSocketHandler {
                     e.printStackTrace();
                 }
                 break;
+            case RESIGN:
+                ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
+                try {
+                    gameService.resignGame(gameCommand.getAuthString(), resignCommand, session);
+                } catch (DataAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 }

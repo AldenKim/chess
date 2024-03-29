@@ -27,6 +27,10 @@ public class ChessGame {
         return turn;
     }
 
+    public ChessMove getLastMove() {
+        return lastMove;
+    }
+
     /**
      * Set's which teams turn it is
      *
@@ -34,6 +38,9 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         this.turn = team;
+    }
+    public void setLastMove(ChessMove move) {
+        this.lastMove = move;
     }
 
     /**

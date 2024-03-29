@@ -10,11 +10,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
-import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.JoinObserverCommand;
-import webSocketMessages.userCommands.JoinPlayerCommand;
-import webSocketMessages.userCommands.LeaveCommand;
-import webSocketMessages.userCommands.MakeMoveCommand;
+import webSocketMessages.userCommands.*;
 
 import java.util.Objects;
 
@@ -165,6 +161,41 @@ public class GameService {
        } catch (DataAccessException e) {
            throw e;
        }
+    }
+
+    public void resignGame(String authToken, ResignCommand resignCommand, Session session) throws DataAccessException {
+        try {
+            webSocketSessions.addSessionToGame(resignCommand.getGameID(), resignCommand.getAuthString(), session);
+
+            if(!isValidAuthToken(authToken)) {
+                webSocketSessions.sendMessage(resignCommand.getGameID(), new ErrorMessage("Error: Unauthorized"), authToken);
+                return;
+            }
+
+            String userName = authDAO.getAuth(authToken).username();
+            int gameID = resignCommand.getGameID();
+            ChessGame game = gameDAO.getGame(gameID).game();
+
+            if(game.getTeamTurn() == null) {
+                webSocketSessions.sendMessage(gameID, new ErrorMessage("Game already over."), authToken);
+                return;
+            }
+            game.setTeamTurn(null);
+            gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+
+            if (!Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName) && !Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)) {
+                webSocketSessions.sendMessage(gameID, new ErrorMessage("Cannot Resign as an Observer."), authToken);
+                return;
+            }
+
+            NotificationMessage notification = new NotificationMessage(userName + " has resigned.");
+            NotificationMessage notificationRoot = new NotificationMessage("You resigned the game.");
+
+            webSocketSessions.broadcastMessage(gameID, notification, authToken);
+            webSocketSessions.sendMessage(gameID, notificationRoot, authToken);
+        } catch (DataAccessException e) {
+            throw e;
+        }
     }
 
     private boolean isValidAuthToken(String authToken) throws DataAccessException {

@@ -1,7 +1,10 @@
 package dataAccess;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import model.GameData;
 
 import java.sql.Connection;
@@ -10,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MySQLGameDAO implements GameDAO{
 
@@ -106,11 +110,47 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     private String serializeGame(ChessGame game) {
-        return gson.toJson(game);
+        JsonObject gameJson = new JsonObject();
+
+        gameJson.add("chessBoard", gson.toJsonTree(game.getBoard()));
+
+        if(game.getTeamTurn() == null){
+            gameJson.addProperty("turn", "null");
+        } else {
+            gameJson.addProperty("turn", game.getTeamTurn().toString());
+        }
+
+        if (game.getLastMove() != null) {
+            gameJson.add("lastMove", gson.toJsonTree(game.getLastMove()));
+        }
+        return gameJson.toString();
     }
 
     private ChessGame deserializeGame(String json) {
-        return gson.fromJson(json, ChessGame.class);
+        JsonObject gameJson = gson.fromJson(json, JsonObject.class);
+
+        ChessBoard chessBoard = gson.fromJson(gameJson.get("chessBoard"), ChessBoard.class);
+
+        String color = gameJson.get("turn").getAsString();
+        ChessGame.TeamColor turn = null;
+
+        if(Objects.equals(color, "WHITE")) {
+            turn = ChessGame.TeamColor.WHITE;
+        } else if (Objects.equals(color, "BLACK")) {
+            turn = ChessGame.TeamColor.BLACK;
+        }
+
+        ChessMove lastMove = null;
+        if (gameJson.has("lastMove")) {
+            lastMove = gson.fromJson(gameJson.get("lastMove"), ChessMove.class);
+        }
+
+        ChessGame game = new ChessGame();
+        game.setBoard(chessBoard);
+        game.setTeamTurn(turn);
+        game.setLastMove(lastMove);
+
+        return game;
     }
 
     private static final String[] CREATE_GAMES_TABLE_QUERY = {
