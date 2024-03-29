@@ -1,9 +1,9 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import webSocketMessages.serverMessages.NotificationMessage;
-import webSocketMessages.userCommands.JoinPlayerCommand;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -36,8 +36,28 @@ public class WebSocketFacade extends Endpoint implements MessageHandler{
     }
 
     public void joinPlayer(String authToken, int gameID, ChessGame.TeamColor teamColor) {
-        JoinPlayerCommand joinPlayerCommand = new JoinPlayerCommand(gameID, teamColor,authToken);
+        JoinPlayerCommand joinPlayerCommand = new JoinPlayerCommand(gameID, teamColor, authToken);
         sendMessage(joinPlayerCommand);
+    }
+
+    public void joinObserver(int gameID, String authToken) {
+        JoinObserverCommand joinObserverCommand = new JoinObserverCommand(gameID, authToken);
+        sendMessage(joinObserverCommand);
+    }
+
+    public void makeMove (int gameID, ChessMove move, String authToken) {
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand(gameID, move, authToken);
+        sendMessage(makeMoveCommand);
+    }
+
+    public void leave (int gameID, String authToken) {
+        LeaveCommand leaveCommand = new LeaveCommand(gameID, authToken);
+        sendMessage(leaveCommand);
+    }
+
+    public void resign (int gameID, String authToken) {
+        ResignCommand resignCommand = new ResignCommand(gameID, authToken);
+        sendMessage(resignCommand);
     }
 
     private void sendMessage(UserGameCommand command) {
