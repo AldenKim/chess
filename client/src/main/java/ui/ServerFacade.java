@@ -13,7 +13,7 @@ import java.util.Map;
 public class ServerFacade {
     private static final String BASE_URL = "http://localhost:";
     private int portNumb;
-    private Map<Integer, Integer> gameNumberToIdMap;
+    public Map<Integer, Integer> gameNumberToIdMap;
     public ServerFacade(int port) {
         this.gameNumberToIdMap = new HashMap<>();
         this.portNumb = port;

@@ -3,7 +3,9 @@ package ui;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
@@ -15,12 +17,12 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-    MessageHandler messageHandler;
+    GameHandler gameHandler;
 
-    public WebSocketFacade(String url, MessageHandler messageHandler) {
+    public WebSocketFacade(String url, GameHandler gameHandler) {
         try {
             URI uri = new URI(url.replace("http", "ws") + "/connect");
-            this.messageHandler = messageHandler;
+            this.gameHandler = gameHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, uri);
@@ -28,7 +30,18 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
+                    Gson gson = new Gson();
+                    ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
 
+                    switch (serverMessage.getServerMessageType()) {
+                        case NOTIFICATION:
+                            NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
+                            gameHandler.printMessage(notificationMessage);
+                        case LOAD_GAME:
+                            LoadGameMessage loadGameMessage = gson.fromJson(message, LoadGameMessage.class);
+                            gameHandler.updateGame(loadGameMessage);
+                            break;
+                    }
                 }
             });
         } catch (URISyntaxException | DeploymentException | IOException e) {
@@ -55,9 +68,10 @@ public class WebSocketFacade extends Endpoint {
         sendMessage(makeMoveCommand);
     }
 
-    public void leave (int gameID, String authToken) {
+    public void leave (int gameID, String authToken) throws IOException {
         LeaveCommand leaveCommand = new LeaveCommand(gameID, authToken);
         sendMessage(leaveCommand);
+        this.session.close();
     }
 
     public void resign (int gameID, String authToken) {

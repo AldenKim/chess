@@ -14,7 +14,16 @@ public class GameUI implements GameHandler{
     private static ChessBoard testBoard = game.getBoard();
     private static Scanner scanner = new Scanner(System.in);
     private static final String IN_GAME_PREFIX = "[IN-GAME] >>> ";
-    public static void run() {
+    private static final String BASE_URL = "http://localhost:8080";
+
+    private WebSocketFacade ws = new WebSocketFacade(BASE_URL, GameUI.this);
+
+    private static ChessGame.TeamColor teamColor;
+    public GameUI(ChessGame.TeamColor teamColor) {
+        this.teamColor = teamColor;
+    }
+
+    public void run() {
         testBoard.resetBoard();
         displayChessBoardFromWhite();
         System.out.println();
@@ -42,6 +51,7 @@ public class GameUI implements GameHandler{
                     break;
                 case "2":
                 case "redraw":
+                    reDrawBoard();
                     break;
                 case "3":
                 case "leave":
@@ -67,6 +77,20 @@ public class GameUI implements GameHandler{
         System.out.println("Move - Make a move if it is your turn");
         System.out.println("Resign - Surrender the game");
         System.out.println("Legal Moves - Enter a piece and show where it can move");
+    }
+
+    private void reDrawBoard() {
+        if(teamColor == ChessGame.TeamColor.WHITE) {
+            displayChessBoardFromWhite();
+        } else if(teamColor == ChessGame.TeamColor.BLACK) {
+            displayChessBoardFromBlack();
+        } else {
+            displayChessBoardFromWhite();
+        }
+    }
+
+    private void leave() {
+        ws.leave();
     }
 
     private static void displayChessBoardFromWhite() {

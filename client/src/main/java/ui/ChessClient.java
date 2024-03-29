@@ -1,5 +1,9 @@
 package ui;
 
+import chess.ChessGame;
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.NotificationMessage;
+
 import java.util.Scanner;
 
 public class ChessClient {
@@ -8,6 +12,21 @@ public class ChessClient {
     private static final String LOGGED_IN_PREFIX = "[LOGGED-IN] >>> ";
     private static boolean isLoggedIn = false;
     private static final ServerFacade facade = new ServerFacade(8080);
+
+    private static final String BASE_URL = "http://localhost:8080";
+
+    private static final GameHandler gameHandler = new GameHandler() {
+        @Override
+        public void updateGame(LoadGameMessage game) {
+
+        }
+
+        @Override
+        public void printMessage(NotificationMessage message) {
+            System.out.println(message.getMessage());
+        }
+    };
+    private static WebSocketFacade ws;
 
     public ChessClient() {
         pre_loginUI();
@@ -185,8 +204,19 @@ public class ChessClient {
         System.out.println("Do you want to play as white or black?: ");
         String userColor = scanner.nextLine();
 
+        ChessGame.TeamColor teamColor;
+        if (userColor.equalsIgnoreCase("white")) {
+            teamColor = ChessGame.TeamColor.WHITE;
+        } else {
+            teamColor = ChessGame.TeamColor.BLACK;
+        }
+
+        ws = new WebSocketFacade(BASE_URL, gameHandler);
+        ws.joinPlayer(authToken, facade.gameNumberToIdMap.get(gameNum), teamColor);
+
         if(facade.joinGame(gameNum, userColor, authToken)) {
-            GameUI.run();
+            GameUI gameUI = new GameUI(teamColor);
+            gameUI.run();
         }
     }
 
@@ -194,8 +224,14 @@ public class ChessClient {
         System.out.println("Enter Game Number: ");
         int gameNum = Integer.parseInt(scanner.nextLine());
 
+        ws = new WebSocketFacade(BASE_URL, gameHandler);
+        ws.joinObserver(facade.gameNumberToIdMap.get(gameNum), authToken);
+
         if(facade.joinObserver(gameNum, authToken)) {
-            GameUI.run();
+            GameUI gameUI = new GameUI(null);
+            gameUI.run();
         }
     }
+
+
 }
