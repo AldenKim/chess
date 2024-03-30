@@ -18,21 +18,17 @@ public class WebSocketHandler {
         this.gson = new Gson();
     }
 
-   /* @OnWebSocketConnect
+  /* @OnWebSocketConnect
     public void onConnect(Session session) {
-        System.out.println("New session connected");
     }
 
     @OnWebSocketClose
     public void onClose(Session session) {
-        System.out.println("Session closed");
     }
 
     @OnWebSocketError
     public void onError(Session session, Throwable throwable) {
-        System.err.println("Error occurred in session");
-        throwable.printStackTrace();
-    }*/
+    } */
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {

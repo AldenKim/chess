@@ -1,10 +1,7 @@
 package server.websocket;
 
 import chess.*;
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GameDAO;
-import dataAccess.UserDAO;
+import dataAccess.*;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ErrorMessage;

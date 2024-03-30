@@ -4,43 +4,43 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 
 import java.util.Scanner;
 
 public class GameUI implements GameHandler{
-    private static ChessGame game = new ChessGame();
-    private static ChessBoard testBoard = game.getBoard();
+    private static ChessGame game;
+    private static ChessBoard testBoard;
     private static Scanner scanner = new Scanner(System.in);
     private static final String IN_GAME_PREFIX = "[IN-GAME] >>> ";
     private static final String BASE_URL = "http://localhost:8080";
+    private static final Gson gson = new Gson();
 
     private WebSocketFacade ws = new WebSocketFacade(BASE_URL, GameUI.this);
 
     private static ChessGame.TeamColor teamColor;
-    public GameUI(ChessGame.TeamColor teamColor) {
+    public GameUI(ChessGame.TeamColor teamColor, ChessGame game) {
         this.teamColor = teamColor;
+        this.game = game;
+        testBoard = game.getBoard();
     }
 
     public void run() {
-        testBoard.resetBoard();
-        displayChessBoardFromWhite();
-        System.out.println();
-        displayChessBoardFromBlack();
+        reDrawBoard();
 
         boolean running = true;
         System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
         System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+        System.out.println("\nOptions:");
+        System.out.println("1. Help");
+        System.out.println("2. Redraw Chess Board");
+        System.out.println("3. Leave");
+        System.out.println("4. Make Move");
+        System.out.println("5. Resign");
+        System.out.println("6. Highlight Legal Moves");
         while (running) {
-            System.out.println("\nOptions:");
-            System.out.println("1. Help");
-            System.out.println("2. Redraw Chess Board");
-            System.out.println("3. Leave");
-            System.out.println("4. Make Move");
-            System.out.println("5. Resign");
-            System.out.println("6. Highlight Legal Moves");
-
             System.out.print(IN_GAME_PREFIX);
             String userInput = scanner.nextLine().toLowerCase();
 
@@ -64,6 +64,7 @@ public class GameUI implements GameHandler{
                     break;
                 case "6":
                 case "legal moves":
+                    displayLegalMoves(testBoard);
                     break;
             }
         }
@@ -81,24 +82,39 @@ public class GameUI implements GameHandler{
 
     private void reDrawBoard() {
         if(teamColor == ChessGame.TeamColor.WHITE) {
-            displayChessBoardFromWhite();
+            displayChessBoardFromWhite(testBoard);
         } else if(teamColor == ChessGame.TeamColor.BLACK) {
-            displayChessBoardFromBlack();
+            displayChessBoardFromBlack(testBoard);
         } else {
-            displayChessBoardFromWhite();
+            displayChessBoardFromWhite(testBoard);
         }
     }
 
-    private void leave() {
-        ws.leave();
+    private void displayLegalMoves (ChessBoard board) {
+        System.out.println("Enter Column: ");
+        String column = scanner.nextLine().toLowerCase();
+        int colVal = colStringToNum(column);
+        System.out.println("Enter Row: ");
+        String row = scanner.nextLine().toLowerCase();
+        int rowVal = Integer.parseInt(row);
+        if(colVal < 1 || colVal > 8 || rowVal < 1 || rowVal > 8) {
+            System.out.println("Incorrect input on the board");
+            return;
+        }
+
+
     }
 
-    private static void displayChessBoardFromWhite() {
+    private void leave() {
+
+    }
+
+    public static void displayChessBoardFromWhite(ChessBoard board) {
         System.out.println("   a  b  c  d  e  f  g  h ");
         for (int i = 8; i >= 1; i--) {
             System.out.print(i + " ");
             for (int j = 1; j <= 8; j++) {
-                ChessPiece piece = testBoard.getPiece(new ChessPosition(i, j));
+                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
                 if ((i + j) % 2 == 0) {
                     System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + textColorForPiece(piece) + pieceType(piece));
                 } else {
@@ -111,12 +127,12 @@ public class GameUI implements GameHandler{
         System.out.println("   a  b  c  d  e  f  g  h ");
     }
 
-    private static void displayChessBoardFromBlack() {
+    public static void displayChessBoardFromBlack(ChessBoard board) {
         System.out.println("   h  g  f  e  d  c  b  a ");
         for (int i = 1; i <= 8; i++) {
             System.out.print(i + " ");
             for (int j = 8; j >= 1; j--) {
-                ChessPiece piece = testBoard.getPiece(new ChessPosition(i, j));
+                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
                 if ((i + j) % 2 == 0) {
                     System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + textColorForPiece(piece) + pieceType(piece));
                 } else {
@@ -182,16 +198,53 @@ public class GameUI implements GameHandler{
     @Override
     public void updateGame(LoadGameMessage game) {
         Object updatedGame = game.getGame();
-        if (updatedGame instanceof ChessGame) {
-            this.game = (ChessGame) updatedGame;
-            this.testBoard = ((ChessGame) updatedGame).getBoard();
+        ChessGame chessGame = gson.fromJson(updatedGame.toString(), ChessGame.class);
+        System.out.println("RECEIVED GAME MESSAGE");
+        this.game = chessGame;
+        this.testBoard = chessGame.getBoard();
+        if(teamColor == ChessGame.TeamColor.WHITE) {
+            displayChessBoardFromWhite(testBoard);
+        } else if (teamColor == ChessGame.TeamColor.BLACK){
+            displayChessBoardFromBlack(testBoard);
         } else {
-            System.out.println("Invalid game type received.");
+            displayChessBoardFromWhite(testBoard);
         }
     }
 
     @Override
     public void printMessage(NotificationMessage message) {
         System.out.println(message.getMessage());
+        System.out.print("[IN-GAME] >>> ");
+    }
+
+    private int colStringToNum(String col) {
+        int colNum = 0;
+        switch (col) {
+            case "a":
+                colNum = 1;
+                break;
+            case "b":
+                colNum = 2;
+                break;
+            case "c":
+                colNum = 3;
+                break;
+            case "d":
+                colNum = 4;
+                break;
+            case "e":
+                colNum = 5;
+                break;
+            case "f":
+                colNum = 6;
+                break;
+            case "g":
+                colNum = 7;
+                break;
+            case "h":
+                colNum = 8;
+                break;
+        }
+        return colNum;
     }
 }
