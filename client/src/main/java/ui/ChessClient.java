@@ -163,6 +163,7 @@ public class ChessClient {
         boolean logoutSuccess = facade.logout(authToken);
         if (logoutSuccess) {
             isLoggedIn = false;
+            postLoginLoop = false;
             pre_loginUI();
         }
     }
@@ -192,7 +193,6 @@ public class ChessClient {
         }
 
         if(facade.joinGame(gameNum, userColor, authToken)) {
-            postLoginLoop = false;
             gameUI = new GameUI(teamColor, authToken, facade.gameNumberToIdMap.get(gameNum));
             gameUI.run();
         }
@@ -203,7 +203,6 @@ public class ChessClient {
         int gameNum = Integer.parseInt(scanner.nextLine());
 
         if(facade.joinObserver(gameNum, authToken)) {
-            postLoginLoop = false;
             gameUI = new GameUI(null, authToken, facade.gameNumberToIdMap.get(gameNum));
             gameUI.run();
         }

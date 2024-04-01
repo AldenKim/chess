@@ -117,6 +117,34 @@ public class GameService {
                 return;
             }
 
+            if(game.isInCheck(ChessGame.TeamColor.BLACK) || game.isInCheck(ChessGame.TeamColor.WHITE)) {
+                webSocketSessions.sendMessage(gameID, new NotificationMessage("Check!"), authToken);
+                webSocketSessions.broadcastMessage(gameID, new NotificationMessage("Check!"), authToken);
+                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+            }
+
+            if(game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                webSocketSessions.sendMessage(gameID, new NotificationMessage("Checkmate!"), authToken);
+                webSocketSessions.broadcastMessage(gameID, new NotificationMessage("Checkmate!"), authToken);
+                game.setTeamTurn(null);
+                LoadGameMessage finalGame = new LoadGameMessage(game);
+                webSocketSessions.sendMessage(gameID, finalGame, authToken);
+                webSocketSessions.broadcastMessage(gameID, finalGame, authToken);
+                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+                return;
+            }
+
+            if(game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(ChessGame.TeamColor.WHITE)) {
+                webSocketSessions.sendMessage(gameID, new NotificationMessage("Stalemate!"), authToken);
+                webSocketSessions.broadcastMessage(gameID, new NotificationMessage("Stalemate!"), authToken);
+                game.setTeamTurn(null);
+                LoadGameMessage finalGame = new LoadGameMessage(game);
+                webSocketSessions.sendMessage(gameID, finalGame, authToken);
+                webSocketSessions.broadcastMessage(gameID, finalGame, authToken);
+                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+                return;
+            }
+
             if(piece.getTeamColor() != userColor) {
                 webSocketSessions.sendMessage(gameID, new ErrorMessage("Cannot move that piece."), authToken);
                 return;

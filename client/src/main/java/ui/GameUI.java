@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -59,12 +60,16 @@ public class GameUI implements GameHandler{
                     break;
                 case "3":
                 case "leave":
+                    leave();
+                    running = false;
                     break;
                 case "4":
                 case "move":
+                    makeMove(testBoard);
                     break;
                 case "5":
                 case "resign":
+                    ws.resign(gameID, authToken);
                     break;
                 case "6":
                 case "legal moves":
@@ -114,8 +119,78 @@ public class GameUI implements GameHandler{
         reDrawBoardWithMoves(board, validMoves);
     }
 
-    private void leave() {
+    private void makeMove(ChessBoard board) {
+        if(teamColor == null) {
+            System.out.println("Cannot make move as observer");
+            return;
+        }
+        if(game.getTeamTurn() == null) {
+            System.out.println("Cannot make move, game is over.");
+            return;
+        }
+        System.out.println("Enter Column: ");
+        String column = scanner.nextLine().toLowerCase();
+        int colVal = colStringToNum(column);
+        System.out.println("Enter Row: ");
+        String row = scanner.nextLine().toLowerCase();
+        int rowVal = Integer.parseInt(row);
+        ChessPiece piece = board.getPiece(new ChessPosition(rowVal, colVal));
+        if(piece == null) {
+            System.out.println("No piece on that square");
+            return;
+        }
+        if(colVal < 1 || colVal > 8 || rowVal < 1 || rowVal > 8) {
+            System.out.println("Incorrect input on the board");
+            return;
+        }
+        System.out.println("Enter Column Where You Want To Move: ");
+        column = scanner.nextLine().toLowerCase();
+        int newColVal = colStringToNum(column);
+        System.out.println("Enter Row Where You Want To Move: ");
+        row = scanner.nextLine().toLowerCase();
+        int newRowVal = Integer.parseInt(row);
+        if(newColVal < 1 || newColVal > 8 || newRowVal < 1 || newRowVal > 8) {
+            System.out.println("Incorrect input on the board");
+            return;
+        }
+        ChessMove newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), null);
+        Collection<ChessMove> validMoves = game.validMoves(new ChessPosition(rowVal, colVal));
+        if(!validMoves.contains(newMove)) {
+            System.out.println("Invalid move.");
+            return;
+        }
+        if(piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if(piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRowVal == 8 || piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRowVal == 1) {
+                System.out.println("Enter what piece you would like to promote to.(q, k, b, r)");
+                String newPiece = scanner.nextLine().toLowerCase();
+                switch (newPiece) {
+                    case "q":
+                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.QUEEN);
+                        break;
+                    case "k":
+                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.KNIGHT);
+                        break;
+                    case "b":
+                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.BISHOP);
+                        break;
+                    case "r":
+                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.ROOK);
+                        break;
+                    default:
+                        System.out.println("Not Valid.");
+                }
+            }
+        }
+        ws.makeMove(gameID, newMove, authToken);
+    }
 
+    private void leave() {
+        try {
+            ws.leave(gameID, authToken);
+            System.out.println("You have left the game.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void displayChessBoardFromWhite(ChessBoard board) {
@@ -291,6 +366,10 @@ public class GameUI implements GameHandler{
         System.out.println("RECEIVED GAME MESSAGE");
         this.game = chessGame;
         this.testBoard = chessGame.getBoard();
+        if(this.game.isInCheckmate(ChessGame.TeamColor.WHITE) || this.game.isInCheckmate(ChessGame.TeamColor.BLACK)
+        || this.game.isInStalemate(ChessGame.TeamColor.WHITE) || this.game.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            this.game.setTeamTurn(null);
+        }
         if(teamColor == ChessGame.TeamColor.WHITE) {
             displayChessBoardFromWhite(testBoard);
         } else if (teamColor == ChessGame.TeamColor.BLACK){
