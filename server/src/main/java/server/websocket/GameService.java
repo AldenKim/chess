@@ -176,9 +176,9 @@ public class GameService {
            String userName = authDAO.getAuth(authToken).username();
            int gameID = leaveCommand.getGameID();
            if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName)) {
-               gameDAO.updateGame(gameID, new GameData(gameID, "", gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
+               gameDAO.updateGame(gameID, new GameData(gameID, null, gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
            } else if (Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)){
-               gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), "", gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
+               gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), null, gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
            }
            webSocketSessions.removeSessionFromGame(gameID, authToken);
            webSocketSessions.removeSession(session);
