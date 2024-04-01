@@ -28,7 +28,9 @@ public class CreateGameService {
             gameIdCounter++;
 
             ChessGame chessGame = new ChessGame();
-
+            while (gameDAO.getGame(gameIdCounter) != null) {
+                gameIdCounter++;
+            }
             GameData newGame = new GameData(gameIdCounter, null,null, request.gameName(), chessGame);
             GameData createdGame = gameDAO.createGame(newGame);
             return new CreateGameResult(createdGame.gameID(), null);

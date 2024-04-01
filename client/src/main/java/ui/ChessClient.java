@@ -2,8 +2,6 @@ package ui;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import webSocketMessages.serverMessages.LoadGameMessage;
-import webSocketMessages.serverMessages.NotificationMessage;
 
 import java.util.Scanner;
 
@@ -13,27 +11,11 @@ public class ChessClient {
     private static final String LOGGED_OUT_PREFIX = "[LOGGED-OUT] >>> ";
     private static final String LOGGED_IN_PREFIX = "[LOGGED-IN] >>> ";
     private static boolean isLoggedIn = false;
+    private static boolean postLoginLoop = true;
     private static final ServerFacade facade = new ServerFacade(8080);
 
-    private static final String BASE_URL = "http://localhost:8080";
     private static ChessGame.TeamColor teamColor;
-    private static final GameHandler gameHandler = new GameHandler() {
-        @Override
-        public void updateGame(LoadGameMessage gameMessage) {
-            Object updatedGame = gameMessage.getGame();
-            ChessGame chessGame = gson.fromJson(updatedGame.toString(), ChessGame.class);
-            System.out.println("RECEIVED AND GOOD");
-            GameUI gameUI = new GameUI(teamColor, chessGame);
-            gameUI.run();
-        }
-
-        @Override
-        public void printMessage(NotificationMessage message) {
-            System.out.println(message.getMessage());
-            System.out.print("[IN-GAME] >>> ");
-        }
-    };
-    private static WebSocketFacade ws;
+    private static GameUI gameUI = null;
 
     public ChessClient() {
         pre_loginUI();
@@ -85,9 +67,6 @@ public class ChessClient {
         System.out.println("4. List Games");
         System.out.println("5. Join Game");
         System.out.println("6. Join Observer");
-
-        boolean postLoginLoop = true;
-
         while(postLoginLoop) {
             System.out.println();
             System.out.print(LOGGED_IN_PREFIX);
@@ -113,12 +92,10 @@ public class ChessClient {
                 case "5":
                 case "join game":
                     joinGame(authToken);
-                    //postLoginLoop = false;
                     break;
                 case "6":
                 case "join observer":
                     joinObserver(authToken);
-                    //postLoginLoop = false;
                     break;
                 default:
                     System.out.println("Invalid input, Please try again.");
@@ -215,8 +192,9 @@ public class ChessClient {
         }
 
         if(facade.joinGame(gameNum, userColor, authToken)) {
-            ws = new WebSocketFacade(BASE_URL, gameHandler);
-            ws.joinPlayer(authToken, facade.gameNumberToIdMap.get(gameNum), teamColor);
+            postLoginLoop = false;
+            gameUI = new GameUI(teamColor, authToken, facade.gameNumberToIdMap.get(gameNum));
+            gameUI.run();
         }
     }
 
@@ -225,8 +203,9 @@ public class ChessClient {
         int gameNum = Integer.parseInt(scanner.nextLine());
 
         if(facade.joinObserver(gameNum, authToken)) {
-            ws = new WebSocketFacade(BASE_URL, gameHandler);
-            ws.joinObserver(facade.gameNumberToIdMap.get(gameNum), authToken);
+            postLoginLoop = false;
+            gameUI = new GameUI(null, authToken, facade.gameNumberToIdMap.get(gameNum));
+            gameUI.run();
         }
     }
 }

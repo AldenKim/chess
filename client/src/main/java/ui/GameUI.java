@@ -1,13 +1,11 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 public class GameUI implements GameHandler{
@@ -21,15 +19,16 @@ public class GameUI implements GameHandler{
     private WebSocketFacade ws = new WebSocketFacade(BASE_URL, GameUI.this);
 
     private static ChessGame.TeamColor teamColor;
-    public GameUI(ChessGame.TeamColor teamColor, ChessGame game) {
+    private static String authToken;
+    private static int gameID;
+
+    public GameUI(ChessGame.TeamColor teamColor, String authToken, int gameID) {
         this.teamColor = teamColor;
-        this.game = game;
-        testBoard = game.getBoard();
+        GameUI.authToken = authToken;
+        this.gameID = gameID;
     }
 
     public void run() {
-        reDrawBoard();
-
         boolean running = true;
         System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
         System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
@@ -40,6 +39,11 @@ public class GameUI implements GameHandler{
         System.out.println("4. Make Move");
         System.out.println("5. Resign");
         System.out.println("6. Highlight Legal Moves");
+        if(teamColor == null) {
+            ws.joinObserver(gameID, authToken);
+        } else {
+            ws.joinPlayer(authToken, gameID, teamColor);
+        }
         while (running) {
             System.out.print(IN_GAME_PREFIX);
             String userInput = scanner.nextLine().toLowerCase();
@@ -101,8 +105,13 @@ public class GameUI implements GameHandler{
             System.out.println("Incorrect input on the board");
             return;
         }
-
-
+        ChessPosition position = new ChessPosition(rowVal, colVal);
+        ChessPiece piece = board.getPiece(position);
+        if(piece == null) {
+            System.out.println("No piece on the board");
+        }
+        Collection<ChessMove> validMoves = game.validMoves(position);
+        reDrawBoardWithMoves(board, validMoves);
     }
 
     private void leave() {
@@ -139,6 +148,86 @@ public class GameUI implements GameHandler{
                     System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + textColorForPiece(piece) + pieceType(piece));
                 }
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+            }
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        }
+        System.out.println("   h  g  f  e  d  c  b  a ");
+    }
+
+    private void reDrawBoardWithMoves(ChessBoard board, Collection<ChessMove> moves) {
+        if(teamColor == ChessGame.TeamColor.WHITE) {
+            displayChessBoardFromWhiteWithMoves(board, moves);
+        } else if(teamColor == ChessGame.TeamColor.BLACK) {
+            displayChessBoardFromBlackWithMoves(board, moves);
+        } else {
+            displayChessBoardFromWhiteWithMoves(board, moves);
+        }
+    }
+
+    public static void displayChessBoardFromWhiteWithMoves(ChessBoard board, Collection<ChessMove> moves) {
+        System.out.println("   a  b  c  d  e  f  g  h ");
+        for (int i = 8; i >= 1; i--) {
+            System.out.print(i + " ");
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                boolean isLegalMove = false;
+                boolean highlightedPiece = false;
+                for (ChessMove move : moves) {
+                    if (move.getEndPosition().equals(currentPosition)) {
+                        isLegalMove = true;
+                        break;
+                    }if(move.getStartPosition().equals(currentPosition)) {
+                        highlightedPiece = true;
+                        break;
+                    }
+                }
+                if (isLegalMove) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+                } else if (highlightedPiece) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_GREEN);
+                } else if ((i + j) % 2 == 0) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
+                } else {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+                }
+                System.out.print(textColorForPiece(piece) + pieceType(piece));
+            }
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        }
+        System.out.println("   a  b  c  d  e  f  g  h ");
+    }
+
+    public static void displayChessBoardFromBlackWithMoves(ChessBoard board, Collection<ChessMove> moves) {
+        System.out.println("   h  g  f  e  d  c  b  a ");
+        for (int i = 1; i <= 8; i++) {
+            System.out.print(i + " ");
+            for (int j = 8; j >= 1; j--) {
+                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                boolean isLegalMove = false;
+                boolean highlightedPiece = false;
+                for (ChessMove move : moves) {
+                    if (move.getEndPosition().equals(currentPosition)) {
+                        isLegalMove = true;
+                        break;
+                    } if(move.getStartPosition().equals(currentPosition)) {
+                        highlightedPiece = true;
+                        break;
+                    }
+                }
+                if (isLegalMove) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+                }else if (highlightedPiece) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_GREEN);
+                } else if ((i + j) % 2 == 0) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
+                } else {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+                }
+                System.out.print(textColorForPiece(piece) + pieceType(piece));
             }
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.println(EscapeSequences.SET_TEXT_COLOR_WHITE);
@@ -209,6 +298,7 @@ public class GameUI implements GameHandler{
         } else {
             displayChessBoardFromWhite(testBoard);
         }
+        System.out.print("[IN-GAME] >>> ");
     }
 
     @Override
