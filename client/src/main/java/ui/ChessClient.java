@@ -18,10 +18,10 @@ public class ChessClient {
     private static GameUI gameUI = null;
 
     public ChessClient() {
-        pre_loginUI();
+        preLoginUI();
     }
 
-    private static void pre_loginUI() {
+    private static void preLoginUI() {
         System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
         System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
         System.out.println("\nWelcome to the Chess Game");
@@ -59,7 +59,7 @@ public class ChessClient {
         }
     }
 
-    private static void post_loginUI(String authToken) {
+    private static void postLoginUI(String authToken) {
         System.out.println("\nPost Login Options:");
         System.out.println("1. Help");
         System.out.println("2. Logout");
@@ -137,7 +137,7 @@ public class ChessClient {
             System.out.println("\nLogged in as: " + EscapeSequences.SET_TEXT_COLOR_GREEN+ username);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
             isLoggedIn = true;
-            post_loginUI(loginSuccessAndAuth);
+            postLoginUI(loginSuccessAndAuth);
         }
     }
 
@@ -155,7 +155,7 @@ public class ChessClient {
             System.out.println("\nLogged in as: " + EscapeSequences.SET_TEXT_COLOR_GREEN+ username);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
             isLoggedIn = true;
-            post_loginUI(registerSuccessAndAuth);
+            postLoginUI(registerSuccessAndAuth);
         }
     }
 
@@ -164,7 +164,7 @@ public class ChessClient {
         if (logoutSuccess) {
             isLoggedIn = false;
             postLoginLoop = false;
-            pre_loginUI();
+            preLoginUI();
         }
     }
 

@@ -18,6 +18,13 @@ public class ServerFacade {
         this.gameNumberToIdMap = new HashMap<>();
         this.portNumb = port;
     }
+    private void helpForError(HttpURLConnection conn) {
+        InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+        JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+        String errorMessage = errorResponse.get("message").getAsString();
+
+        System.out.println(errorMessage);
+    }
 
     public String login(String username, String password) {
         try {
@@ -42,11 +49,7 @@ public class ServerFacade {
                 System.out.println("Login successful");
                 return authToken;
             } else {
-                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
-                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
-                String errorMessage = errorResponse.get("message").getAsString();
-
-                System.out.println(errorMessage);
+                helpForError(conn);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,11 +81,7 @@ public class ServerFacade {
                 System.out.println("Registration successful!");
                 return authToken;
             } else {
-                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
-                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
-                String errorMessage = errorResponse.get("message").getAsString();
-
-                System.out.println(errorMessage);
+                helpForError(conn);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,11 +104,7 @@ public class ServerFacade {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
                 return true;
             } else {
-                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
-                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
-                String errorMessage = errorResponse.get("message").getAsString();
-
-                System.out.println(errorMessage);
+                helpForError(conn);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -138,11 +133,7 @@ public class ServerFacade {
                 System.out.println("Game created successfully!");
                 return true;
             } else {
-                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
-                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
-                String errorMessage = errorResponse.get("message").getAsString();
-
-                System.out.println(errorMessage);
+                helpForError(conn);
             }
         } catch (IOException e) {
             e.printStackTrace();

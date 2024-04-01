@@ -28,7 +28,7 @@ public class WebSocketSessions {
         }
     }
 
-    public void removeSession(Session session) {
+    /*public void removeSession(Session session) {
         Set<Map.Entry<Integer, Map<String, Session>>> entrySet = sessionMap.entrySet();
         for(Map.Entry<Integer, Map<String, Session>> entry : entrySet) {
             Map<String, Session> gameSessions = entry.getValue();
@@ -41,7 +41,7 @@ public class WebSocketSessions {
 
     public Map<String, Session> getSessionsForGame(int gameID) {
         return sessionMap.get(gameID);
-    }
+    }*/
 
     public void sendMessage(int gameID, ServerMessage message, String authToken) {
         Map<String, Session> gameSessions = sessionMap.get(gameID);
