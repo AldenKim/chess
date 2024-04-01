@@ -181,6 +181,7 @@ public class GameService {
                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), "", gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
            }
            webSocketSessions.removeSessionFromGame(gameID, authToken);
+           webSocketSessions.removeSession(session);
            NotificationMessage notification = new NotificationMessage(userName + " has left the game.");
            webSocketSessions.broadcastMessage(gameID, notification, authToken);
        } catch (DataAccessException e) {

@@ -26,6 +26,15 @@ public class ServerFacade {
         System.out.println(errorMessage);
     }
 
+    private boolean helpForError2 (HttpURLConnection conn) {
+        InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+        JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+        String errorMessage = errorResponse.get("message").getAsString();
+
+        System.out.println(errorMessage);
+        return false;
+    }
+
     public String login(String username, String password) {
         try {
             URL url = new URL(BASE_URL + portNumb + "/session");
@@ -229,12 +238,7 @@ public class ServerFacade {
                 System.out.println("Joined game successfully!");
                 return true;
             } else {
-                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
-                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
-                String errorMessage = errorResponse.get("message").getAsString();
-
-                System.out.println(errorMessage);
-                return false;
+                helpForError2(conn);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -268,11 +272,7 @@ public class ServerFacade {
                 System.out.println("Joined game as observer successfully!");
                 return true;
             } else {
-                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
-                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
-                String errorMessage = errorResponse.get("message").getAsString();
-                System.out.println(errorMessage);
-                return false;
+                helpForError2(conn);
             }
         } catch (IOException e) {
             e.printStackTrace();
