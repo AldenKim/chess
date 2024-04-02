@@ -3,6 +3,7 @@ package ui;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -41,6 +42,9 @@ public class WebSocketFacade extends Endpoint {
                             LoadGameMessage loadGameMessage = gson.fromJson(message, LoadGameMessage.class);
                             gameHandler.updateGame(loadGameMessage);
                             break;
+                        case ERROR:
+                            NotificationMessage errorMessage = gson.fromJson(message, NotificationMessage.class);
+                            gameHandler.printMessage(errorMessage);
                     }
                 }
             });
