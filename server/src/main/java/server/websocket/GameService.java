@@ -180,10 +180,10 @@ public class GameService {
            } else if (Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)){
                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), null, gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
            }
-           webSocketSessions.removeSessionFromGame(gameID, authToken);
-           webSocketSessions.removeSession(session);
            NotificationMessage notification = new NotificationMessage(userName + " has left the game.");
            webSocketSessions.broadcastMessage(gameID, notification, authToken);
+           webSocketSessions.removeSessionFromGame(gameID, authToken);
+           webSocketSessions.removeSession(session);
        } catch (DataAccessException e) {
            throw e;
        }
