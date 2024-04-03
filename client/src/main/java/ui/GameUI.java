@@ -69,7 +69,7 @@ public class GameUI implements GameHandler{
                     break;
                 case "5":
                 case "resign":
-                    ws.resign(gameID, authToken);
+                    resign();
                     break;
                 case "6":
                 case "legal moves":
@@ -190,6 +190,17 @@ public class GameUI implements GameHandler{
             System.out.println("You have left the game.");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void resign() {
+        System.out.println("Are you sure you want to resign? (Y/N)");
+        String answer = scanner.nextLine().toLowerCase();
+        if(answer.equals("y")) {
+            ws.resign(gameID, authToken);
+            game.setTeamTurn(null);
+        } else if (answer.equals("n")){
+            System.out.println("Continuing with the game.");
         }
     }
 
