@@ -139,10 +139,17 @@ public class ChessGame {
         ChessPiece piece = chessBoard.getPiece(move.getStartPosition());
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
+        if(piece == null) {
+            throw new InvalidMoveException("No piece at that square.");
+        }
 
         if(piece.getTeamColor() != turn)
         {
-            throw new InvalidMoveException("Incorrect team turn");
+            throw new InvalidMoveException("Incorrect team turn.");
+        }
+
+        if(piece == null) {
+            throw new InvalidMoveException("No Piece at that square.");
         }
 
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
