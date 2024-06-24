@@ -2,7 +2,6 @@ package dataAccess;
 
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

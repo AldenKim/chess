@@ -6,7 +6,6 @@ import dataAccess.MySQLUserDAO;
 import dataAccess.UserDAO;
 import model.AuthData;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import requests.LoginRequest;
 import results.LoginResult;
 
