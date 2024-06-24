@@ -5,6 +5,7 @@ import dataAccess.DataAccessException;
 import dataAccess.MySQLUserDAO;
 import dataAccess.UserDAO;
 import model.AuthData;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import requests.LoginRequest;
 import results.LoginResult;
@@ -25,8 +26,8 @@ public class LoginService {
             var user = userDAO.getUser(request.username());
 
             if(userDAO instanceof MySQLUserDAO) {
-                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-                if(user == null || !encoder.matches(request.password(), user.password())) {
+                var hashedPassword = userDAO.getUser(request.username()).password();
+                if(user == null || !BCrypt.checkpw(user.password(), hashedPassword)) {
                     return new LoginResult(null, null, "Error: Invalid username or password");
                 }
             } else {

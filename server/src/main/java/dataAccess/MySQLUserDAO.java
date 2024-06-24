@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Connection;
@@ -28,8 +29,7 @@ public class MySQLUserDAO implements UserDAO{
     public UserData createUser(UserData user) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection();
         PreparedStatement statement = conn.prepareStatement("INSERT INTO users (username, password, email) VALUES (?, ?, ?)")) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String hashedPassword = encoder.encode(user.password());
+            String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
 
             statement.setString(1, user.username());
             statement.setString(2, hashedPassword);
