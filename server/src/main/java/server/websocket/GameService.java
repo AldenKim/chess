@@ -24,6 +24,45 @@ public class GameService {
         this.userDAO = userDAO;
         this.webSocketSessions = new WebSocketSessions();
     }
+    public void connect(String authToken, ConnectCommand connectCommand, Session session) throws DataAccessException {
+        webSocketSessions.addSessionToGame(connectCommand.getGameID(), connectCommand.getAuthString(), session);
+
+        if(!isValidAuthToken(authToken)) {
+            webSocketSessions.sendMessage(connectCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
+            return;
+        }
+
+        int gameID = connectCommand.getGameID();
+        if(gameDAO.getGame(gameID) == null) {
+            webSocketSessions.sendMessage(connectCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
+            return;
+        }
+
+        ChessGame game = gameDAO.getGame(gameID).game();
+        ChessGame.TeamColor playerColor = connectCommand.getPlayerColor();
+        LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
+
+        String userName = authDAO.getAuth(authToken).username();
+
+        String color;
+
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            color = "White";
+        } else if (playerColor == ChessGame.TeamColor.BLACK) {
+            color = "Black";
+        } else {
+            color = "Observer";
+        }
+
+        NotificationMessage notification;
+        if(color.equals("White") || color.equals("Black")) {
+            notification = new NotificationMessage(userName + " joined as color " + color);
+        } else {
+            notification = new NotificationMessage(userName + " joined as observer.");
+        }
+        webSocketSessions.sendMessage(gameID, notificationToRootClient, authToken);
+        webSocketSessions.broadcastMessage(gameID, notification, authToken);
+    }
 
     public void joinPlayer(String authToken, JoinPlayerCommand joinPlayerCommand, Session session) throws DataAccessException {
         try {

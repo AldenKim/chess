@@ -212,7 +212,41 @@ public class ServerFacade {
         return element != null && !element.isJsonNull() ? element.getAsString() : null;
     }
 
-    public boolean joinGame (int gameID, String whiteOrBlack, String authToken){
+    public boolean connect(int gameID, String whiteOrBlack, String authToken) {
+        try {
+            URL url = new URL(BASE_URL + portNumb + "/game");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("authorization", authToken);
+            conn.setDoOutput(true);
+
+            JsonObject joinGameData = new JsonObject();
+            joinGameData.addProperty("playerColor", whiteOrBlack.toUpperCase());
+            int actualGameId = -1;
+            if(gameNumberToIdMap.get(gameID) != null) {
+                actualGameId = gameNumberToIdMap.get(gameID);
+            }
+            joinGameData.addProperty("gameID", actualGameId);
+
+            String jsonData = new Gson().toJson(joinGameData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Joined game successfully!");
+                return true;
+            } else {
+                helpForError2(conn);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+   /* public boolean joinGame (int gameID, String whiteOrBlack, String authToken){
         try {
             URL url = new URL(BASE_URL +portNumb+ "/game");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -278,5 +312,5 @@ public class ServerFacade {
             e.printStackTrace();
         }
         return false;
-    }
+    }*/
 }

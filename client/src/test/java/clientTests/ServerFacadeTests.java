@@ -152,7 +152,7 @@ public class ServerFacadeTests {
 
         facade.listGames(authToken);
 
-        boolean joinGameSuccess = facade.joinGame(1, "WHITE", authToken);
+        boolean joinGameSuccess = facade.connect(1, "WHITE", authToken);
         Assertions.assertTrue(joinGameSuccess);
     }
 
@@ -161,7 +161,7 @@ public class ServerFacadeTests {
         String authToken = facade.register("validUsername", "validPassword", "validEmail");
         Assertions.assertNotNull(authToken);
 
-        boolean joinGameSuccess = facade.joinGame(1000, "white", "invalidAuthToken");
+        boolean joinGameSuccess = facade.connect(1000, "white", "invalidAuthToken");
         Assertions.assertFalse(joinGameSuccess);
     }
 
@@ -175,7 +175,7 @@ public class ServerFacadeTests {
 
         facade.listGames(authToken);
 
-        boolean joinGameSuccess = facade.joinObserver(1, authToken);
+        boolean joinGameSuccess = facade.connect(1,"", authToken);
         Assertions.assertTrue(joinGameSuccess);
     }
 
@@ -184,7 +184,7 @@ public class ServerFacadeTests {
         String authToken = facade.register("validUsername", "validPassword", "validEmail");
         Assertions.assertNotNull(authToken);
 
-        boolean joinGameSuccess = facade.joinObserver(1000, "invalidAuthToken");
+        boolean joinGameSuccess = facade.connect(1000,"", "invalidAuthToken");
         Assertions.assertFalse(joinGameSuccess);
     }
 }

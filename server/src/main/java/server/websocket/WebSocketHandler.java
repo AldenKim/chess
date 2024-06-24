@@ -34,6 +34,14 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException {
         UserGameCommand gameCommand = new Gson().fromJson(message, UserGameCommand.class);
         switch(gameCommand.getCommandType()) {
+            case CONNECT:
+                ConnectCommand connectCommand = gson.fromJson(message, ConnectCommand.class);
+                try {
+                    gameService.connect(connectCommand.getAuthString(), connectCommand, session);
+                } catch (DataAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
             case JOIN_PLAYER:
                 JoinPlayerCommand joinPlayerCommand = gson.fromJson(message, JoinPlayerCommand.class);
                 try {

@@ -192,7 +192,7 @@ public class ChessClient {
             teamColor = ChessGame.TeamColor.BLACK;
         }
 
-        if(facade.joinGame(gameNum, userColor, authToken)) {
+        if(facade.connect(gameNum, userColor, authToken)) {
             gameUI = new GameUI(teamColor, authToken, facade.gameNumberToIdMap.get(gameNum));
             gameUI.run();
         }
@@ -202,7 +202,7 @@ public class ChessClient {
         System.out.println("Enter Game Number: ");
         int gameNum = Integer.parseInt(scanner.nextLine());
 
-        if(facade.joinObserver(gameNum, authToken)) {
+        if(facade.connect(gameNum, "",authToken)) {
             gameUI = new GameUI(null, authToken, facade.gameNumberToIdMap.get(gameNum));
             gameUI.run();
         }

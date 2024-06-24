@@ -53,6 +53,10 @@ public class WebSocketFacade extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig){
     }
+    public void connectPlayer(String authToken, int gameID, ChessGame.TeamColor teamColor) {
+        ConnectCommand connectCommand = new ConnectCommand(gameID, teamColor, authToken);
+        sendMessage(connectCommand);
+    }
 
     public void joinPlayer(String authToken, int gameID, ChessGame.TeamColor teamColor) {
         JoinPlayerCommand joinPlayerCommand = new JoinPlayerCommand(gameID, teamColor, authToken);
