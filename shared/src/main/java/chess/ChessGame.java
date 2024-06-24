@@ -148,10 +148,6 @@ public class ChessGame {
             throw new InvalidMoveException("Incorrect team turn.");
         }
 
-        if(piece == null) {
-            throw new InvalidMoveException("No Piece at that square.");
-        }
-
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if(!validMoves.contains(move))
         {
