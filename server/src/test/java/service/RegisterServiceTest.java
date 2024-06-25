@@ -1,11 +1,10 @@
-package serviceTests;
+package service;
 
 import dataAccess.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import requests.RegisterRequest;
 import results.RegisterResult;
-import service.RegisterService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

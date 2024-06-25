@@ -1,4 +1,4 @@
-package serviceTests;
+package service;
 
 import dataAccess.*;
 import model.AuthData;
@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import requests.JoinGameRequest;
 import results.JoinGameResult;
-import service.JoinGameService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
