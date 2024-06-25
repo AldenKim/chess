@@ -1,9 +1,9 @@
 package service;
 
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.MySQLUserDAO;
-import dataAccess.UserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.MySQLUserDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import org.mindrot.jbcrypt.BCrypt;
 import requests.LoginRequest;

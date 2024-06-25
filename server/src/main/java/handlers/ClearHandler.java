@@ -1,9 +1,8 @@
 package handlers;
 
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import results.ClearApplicationResult;
-import results.CreateGameResult;
 import service.ClearApplicationService;
 import spark.Response;
 

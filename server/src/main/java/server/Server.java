@@ -1,13 +1,11 @@
 package server;
 
-import dataAccess.*;
+import dataaccess.*;
 import handlers.*;
 import server.websocket.GameService;
 import server.websocket.WebSocketHandler;
 import service.*;
 import spark.*;
-
-import java.nio.file.Paths;
 
 public class Server {
     public int run(int desiredPort) {

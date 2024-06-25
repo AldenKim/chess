@@ -11,25 +11,25 @@ import java.util.Map;
 import java.util.Set;
 
 public class WebSocketSessions {
-    private static final Map<Integer, Map<String, Session>> sessionMap = new HashMap<>();
+    private static final Map<Integer, Map<String, Session>> SESSION_MAP = new HashMap<>();
 
     public void addSessionToGame(int gameID, String authToken, Session session) {
-        Map<String, Session> gameSessions = sessionMap.computeIfAbsent(gameID, k -> new HashMap<>());
+        Map<String, Session> gameSessions = SESSION_MAP.computeIfAbsent(gameID, k -> new HashMap<>());
         gameSessions.put(authToken, session);
     }
 
     public void removeSessionFromGame(int gameID, String authToken) {
-        Map<String, Session> gameSessions = sessionMap.get(gameID);
+        Map<String, Session> gameSessions = SESSION_MAP.get(gameID);
         if(gameSessions != null) {
             gameSessions.remove(authToken);
             if(gameSessions.isEmpty()) {
-                sessionMap.remove(gameID);
+                SESSION_MAP.remove(gameID);
             }
         }
     }
 
     public void removeSession(Session session) {
-        Set<Map.Entry<Integer, Map<String, Session>>> entrySet = sessionMap.entrySet();
+        Set<Map.Entry<Integer, Map<String, Session>>> entrySet = SESSION_MAP.entrySet();
         for(Map.Entry<Integer, Map<String, Session>> entry : entrySet) {
             Map<String, Session> gameSessions = entry.getValue();
             gameSessions.values().removeIf(s -> s.equals(session));
@@ -40,7 +40,7 @@ public class WebSocketSessions {
     }
 
     public void sendMessage(int gameID, ServerMessage message, String authToken) {
-        Map<String, Session> gameSessions = sessionMap.get(gameID);
+        Map<String, Session> gameSessions = SESSION_MAP.get(gameID);
         Session targetSession = gameSessions.get(authToken);
         if(targetSession != null && targetSession.isOpen()) {
             sendToSession(targetSession, message);
@@ -48,7 +48,7 @@ public class WebSocketSessions {
     }
 
     public void broadcastMessage(int gameID, ServerMessage message, String exceptThisAuthToken) {
-        Map<String, Session> gameSessions = sessionMap.get(gameID);
+        Map<String, Session> gameSessions = SESSION_MAP.get(gameID);
         for (Map.Entry<String, Session> entry : gameSessions.entrySet()) {
             String authToken = entry.getKey();
             if(!authToken.equals(exceptThisAuthToken)) {

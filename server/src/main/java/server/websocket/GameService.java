@@ -1,7 +1,7 @@
 package server.websocket;
 
 import chess.*;
-import dataAccess.*;
+import dataaccess.*;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ErrorMessage;

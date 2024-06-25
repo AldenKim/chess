@@ -15,7 +15,7 @@ public class GameUI implements GameHandler{
     private static Scanner scanner = new Scanner(System.in);
     private static final String IN_GAME_PREFIX = "[IN-GAME] >>> ";
     private static final String BASE_URL = "http://localhost:8080";
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     private WebSocketFacade ws = new WebSocketFacade(BASE_URL, GameUI.this);
 
@@ -354,7 +354,7 @@ public class GameUI implements GameHandler{
     @Override
     public void updateGame(LoadGameMessage game) {
         Object updatedGame = game.getGame();
-        ChessGame chessGame = gson.fromJson(updatedGame.toString(), ChessGame.class);
+        ChessGame chessGame = GSON.fromJson(updatedGame.toString(), ChessGame.class);
         System.out.println("RECEIVED GAME MESSAGE");
         this.game = chessGame;
         this.testBoard = chessGame.getBoard();

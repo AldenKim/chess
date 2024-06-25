@@ -6,13 +6,13 @@ import com.google.gson.Gson;
 import java.util.Scanner;
 
 public class ChessClient {
-    private static final Scanner scanner = new Scanner(System.in);
-    private static final Gson gson = new Gson();
+    private static final Scanner SCANNER = new Scanner(System.in);
+    
     private static final String LOGGED_OUT_PREFIX = "[LOGGED-OUT] >>> ";
     private static final String LOGGED_IN_PREFIX = "[LOGGED-IN] >>> ";
     private static boolean isLoggedIn = false;
     private static boolean postLoginLoop = true;
-    private static final ServerFacade facade = new ServerFacade(8080);
+    private static final ServerFacade FACADE = new ServerFacade(8080);
 
     private static ChessGame.TeamColor teamColor;
     private static GameUI gameUI = null;
@@ -33,7 +33,7 @@ public class ChessClient {
             System.out.println("4. Register");
 
             System.out.print(LOGGED_OUT_PREFIX);
-            String userInput = scanner.nextLine().trim().toLowerCase();
+            String userInput = SCANNER.nextLine().trim().toLowerCase();
 
             switch (userInput) {
                 case "1":
@@ -70,7 +70,7 @@ public class ChessClient {
         while(postLoginLoop) {
             System.out.println();
             System.out.print(LOGGED_IN_PREFIX);
-            String userInput = scanner.nextLine().toLowerCase();
+            String userInput = SCANNER.nextLine().toLowerCase();
 
             switch (userInput) {
                 case "1":
@@ -128,11 +128,11 @@ public class ChessClient {
     private static void login() {
         System.out.println("\nPlease provide correct login information:");
         System.out.print("Username: ");
-        String username = scanner.nextLine().trim();
+        String username = SCANNER.nextLine().trim();
         System.out.print("Password: ");
-        String password = scanner.nextLine().trim();
+        String password = SCANNER.nextLine().trim();
 
-        String loginSuccessAndAuth = facade.login(username, password);
+        String loginSuccessAndAuth = FACADE.login(username, password);
         if(loginSuccessAndAuth != null) {
             System.out.println("\nLogged in as: " + EscapeSequences.SET_TEXT_COLOR_GREEN+ username);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
@@ -144,13 +144,13 @@ public class ChessClient {
     private static void register() {
         System.out.println("\nPlease provide registration information:");
         System.out.print("Username: ");
-        String username = scanner.nextLine().trim();
+        String username = SCANNER.nextLine().trim();
         System.out.print("Password: ");
-        String password = scanner.nextLine().trim();
+        String password = SCANNER.nextLine().trim();
         System.out.print("Email: ");
-        String email = scanner.nextLine().trim();
+        String email = SCANNER.nextLine().trim();
 
-        String registerSuccessAndAuth = facade.register(username, password, email);
+        String registerSuccessAndAuth = FACADE.register(username, password, email);
         if(registerSuccessAndAuth!=null) {
             System.out.println("\nLogged in as: " + EscapeSequences.SET_TEXT_COLOR_GREEN+ username);
             System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
@@ -160,7 +160,7 @@ public class ChessClient {
     }
 
     private static void logout(String authToken) {
-        boolean logoutSuccess = facade.logout(authToken);
+        boolean logoutSuccess = FACADE.logout(authToken);
         if (logoutSuccess) {
             isLoggedIn = false;
             postLoginLoop = false;
@@ -170,21 +170,21 @@ public class ChessClient {
 
      private static void createGame(String authToken) {
         System.out.println("\nEnter the name of the new game:");
-        String gameName = scanner.nextLine();
+        String gameName = SCANNER.nextLine();
 
-        facade.createGame(authToken, gameName);
+        FACADE.createGame(authToken, gameName);
     }
 
     private static void listGames(String authToken) {
         System.out.println("List of Games: \n");
-        facade.listGames(authToken);
+        FACADE.listGames(authToken);
     }
 
     private static void joinGame(String authToken) {
         System.out.println("Enter Game Number: ");
-        int gameNum = Integer.parseInt(scanner.nextLine());
+        int gameNum = Integer.parseInt(SCANNER.nextLine());
         System.out.println("Do you want to play as white or black?: ");
-        String userColor = scanner.nextLine();
+        String userColor = SCANNER.nextLine();
 
         if (userColor.equalsIgnoreCase("white")) {
             teamColor = ChessGame.TeamColor.WHITE;
@@ -192,18 +192,18 @@ public class ChessClient {
             teamColor = ChessGame.TeamColor.BLACK;
         }
 
-        if(facade.connect(gameNum, userColor, authToken)) {
-            gameUI = new GameUI(teamColor, authToken, facade.gameNumberToIdMap.get(gameNum));
+        if(FACADE.connect(gameNum, userColor, authToken)) {
+            gameUI = new GameUI(teamColor, authToken, FACADE.gameNumberToIdMap.get(gameNum));
             gameUI.run();
         }
     }
 
     private static void joinObserver(String authToken) {
         System.out.println("Enter Game Number: ");
-        int gameNum = Integer.parseInt(scanner.nextLine());
+        int gameNum = Integer.parseInt(SCANNER.nextLine());
 
-        if(facade.connect(gameNum, "",authToken)) {
-            gameUI = new GameUI(null, authToken, facade.gameNumberToIdMap.get(gameNum));
+        if(FACADE.connect(gameNum, "",authToken)) {
+            gameUI = new GameUI(null, authToken, FACADE.gameNumberToIdMap.get(gameNum));
             gameUI.run();
         }
     }

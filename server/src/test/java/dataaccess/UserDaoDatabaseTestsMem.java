@@ -1,7 +1,5 @@
 package dataaccess;
 
-import dataAccess.DataAccessException;
-import dataAccess.MemoryUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
