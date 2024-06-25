@@ -93,22 +93,31 @@ public class GameService {
                 return;
             }
 
-            if(game.isInCheck(ChessGame.TeamColor.BLACK) && !game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheck(ChessGame.TeamColor.WHITE) && !game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            if(game.isInCheck(ChessGame.TeamColor.BLACK)
+                    && !game.isInCheckmate(ChessGame.TeamColor.BLACK)
+                    || game.isInCheck(ChessGame.TeamColor.WHITE)
+                    && !game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                 webSocketSessions.sendMessage(gameID, new NotificationMessage("Check!"), authToken);
                 webSocketSessions.broadcastMessage(gameID, new NotificationMessage("Check!"), authToken);
-                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),
+                        gameDAO.getGame(gameID).blackUsername(),
+                        gameDAO.getGame(gameID).gameName(), game));
             }
 
             if(game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                 webSocketSessions.sendMessage(gameID, new NotificationMessage("Checkmate!"), authToken);
                 webSocketSessions.broadcastMessage(gameID, new NotificationMessage("Checkmate!"), authToken);
-                NotificationMessage notification = new NotificationMessage(userName + " moved to " + positionToString(makeMoveCommand.getMove().getEndPosition()));
+                NotificationMessage notification =
+                        new NotificationMessage(userName + " moved to "
+                                + positionToString(makeMoveCommand.getMove().getEndPosition()));
                 webSocketSessions.broadcastMessage(gameID, notification, authToken);
                 game.setTeamTurn(null);
                 LoadGameMessage finalGame = new LoadGameMessage(game);
                 webSocketSessions.sendMessage(gameID, finalGame, authToken);
                 webSocketSessions.broadcastMessage(gameID, finalGame, authToken);
-                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),
+                        gameDAO.getGame(gameID).blackUsername(),
+                        gameDAO.getGame(gameID).gameName(), game));
                 return;
             }
 
@@ -119,7 +128,10 @@ public class GameService {
                 LoadGameMessage finalGame = new LoadGameMessage(game);
                 webSocketSessions.sendMessage(gameID, finalGame, authToken);
                 webSocketSessions.broadcastMessage(gameID, finalGame, authToken);
-                gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+                gameDAO.updateGame(gameID,
+                        new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),
+                                gameDAO.getGame(gameID).blackUsername(),
+                                gameDAO.getGame(gameID).gameName(), game));
                 return;
             }
 
@@ -128,11 +140,17 @@ public class GameService {
                 return;
             }
 
-            gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+            gameDAO.updateGame(gameID,
+                    new GameData(gameID,
+                            gameDAO.getGame(gameID).whiteUsername(),
+                            gameDAO.getGame(gameID).blackUsername(),
+                            gameDAO.getGame(gameID).gameName(), game));
 
             LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
 
-            NotificationMessage notification = new NotificationMessage(userName + " moved to " + positionToString(makeMoveCommand.getMove().getEndPosition()));
+            NotificationMessage notification =
+                    new NotificationMessage(userName + " moved to " +
+                            positionToString(makeMoveCommand.getMove().getEndPosition()));
 
             webSocketSessions.sendMessage(gameID, notificationToRootClient, authToken);
             webSocketSessions.broadcastMessage(gameID, notificationToRootClient, authToken);
@@ -154,9 +172,16 @@ public class GameService {
            String userName = authDAO.getAuth(authToken).username();
            int gameID = leaveCommand.getGameID();
            if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName)) {
-               gameDAO.updateGame(gameID, new GameData(gameID, null, gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
+               gameDAO.updateGame(gameID,
+                       new GameData(gameID, null,
+                               gameDAO.getGame(gameID).blackUsername(),
+                               gameDAO.getGame(gameID).gameName(),
+                               gameDAO.getGame(gameID).game()));
            } else if (Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)){
-               gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), null, gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
+               gameDAO.updateGame(gameID,
+                       new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),
+                               null, gameDAO.getGame(gameID).gameName(),
+                               gameDAO.getGame(gameID).game()));
            }
            NotificationMessage notification = new NotificationMessage(userName + " has left the game.");
            webSocketSessions.broadcastMessage(gameID, notification, authToken);
@@ -185,9 +210,13 @@ public class GameService {
                 return;
             }
             game.setTeamTurn(null);
-            gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
+            gameDAO.updateGame(gameID,
+                    new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),
+                            gameDAO.getGame(gameID).blackUsername(),
+                            gameDAO.getGame(gameID).gameName(), game));
 
-            if (!Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName) && !Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)) {
+            if (!Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName)
+                    && !Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)) {
                 webSocketSessions.sendMessage(gameID, new ErrorMessage("Cannot Resign as an Observer."), authToken);
                 return;
             }

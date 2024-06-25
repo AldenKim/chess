@@ -157,21 +157,30 @@ public class GameUI implements GameHandler{
             return;
         }
         if(piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if(piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRowVal == 8 || piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRowVal == 1) {
+            if(piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRowVal == 8
+                    || piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRowVal == 1) {
                 System.out.println("Enter what piece you would like to promote to.(q, k, b, r)");
                 String newPiece = scanner.nextLine().toLowerCase();
                 switch (newPiece) {
                     case "q":
-                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.QUEEN);
+                        newMove = new ChessMove(
+                                new ChessPosition(rowVal, colVal),
+                                new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.QUEEN);
                         break;
                     case "k":
-                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.KNIGHT);
+                        newMove = new ChessMove(
+                                new ChessPosition(rowVal, colVal),
+                                new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.KNIGHT);
                         break;
                     case "b":
-                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.BISHOP);
+                        newMove = new ChessMove(
+                                new ChessPosition(rowVal, colVal),
+                                new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.BISHOP);
                         break;
                     case "r":
-                        newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.ROOK);
+                        newMove = new ChessMove(
+                                new ChessPosition(rowVal, colVal),
+                                new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.ROOK);
                         break;
                     default:
                         System.out.println("Not Valid.");

@@ -23,7 +23,11 @@ public class JoinGameService {
             }
 
             GameData game = gameDAO.getGame(request.gameID());
-            if (request.playerColor() != null && (game.whiteUsername() != null && request.playerColor().equalsIgnoreCase("WHITE") || game.blackUsername() != null && request.playerColor().equalsIgnoreCase("BLACK"))) {
+            if (request.playerColor() != null
+                    && (game.whiteUsername() != null
+                    && request.playerColor().equalsIgnoreCase("WHITE")
+                    || game.blackUsername() != null
+                    && request.playerColor().equalsIgnoreCase("BLACK"))) {
                 return new JoinGameResult("Error: Game already taken");
             }
 

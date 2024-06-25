@@ -89,7 +89,8 @@ public class ChessPiece {
         }
         return validMoves;
     }
-    private void addValidMoveIfEmptyOrOpponent(Collection<ChessMove> validMoves, ChessPosition currentPosition, int newRowPos, int newColPos, ChessBoard board) {
+    private void addValidMoveIfEmptyOrOpponent(Collection<ChessMove> validMoves,
+                                               ChessPosition currentPosition, int newRowPos, int newColPos, ChessBoard board) {
         if (isValidPosition(newRowPos, newColPos)) {
             ChessPosition newPosition = new ChessPosition(newRowPos, newColPos);
             ChessPiece pieceAtNewPosition = board.getPiece(newPosition);
@@ -103,7 +104,8 @@ public class ChessPiece {
         return row >= 1 && row <= 8 && column >= 1 && column <= 8;
     }
 
-    private void addValidMovesInDirection(Collection<ChessMove> validMoves, ChessPosition myPosition, int[] rowMoves, int[] colMoves, ChessBoard board) {
+    private void addValidMovesInDirection(Collection<ChessMove> validMoves,
+                                          ChessPosition myPosition, int[] rowMoves, int[] colMoves, ChessBoard board) {
         for (int i = 0; i < rowMoves.length; i++) {
             int newRowPos = myPosition.getRow();
             int newColPos = myPosition.getColumn();
@@ -220,7 +222,8 @@ public class ChessPiece {
         if(myPosition.getRow() == initialRowPos)
         {
             ChessPosition doubleMovePos = new ChessPosition(myPosition.getRow() + 2 * direction, myPosition.getColumn());
-            if(board.getPiece(doubleMovePos) == null && board.getPiece(new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn())) == null)
+            if(board.getPiece(doubleMovePos) == null &&
+                    board.getPiece(new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn())) == null)
             {
                 validMoves.add(new ChessMove(myPosition, doubleMovePos, null));
             }
@@ -268,8 +271,12 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessPiece that = (ChessPiece) o;
         return pieceColor == that.pieceColor && type == that.type;
     }

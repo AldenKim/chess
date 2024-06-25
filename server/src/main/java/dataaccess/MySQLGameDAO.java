@@ -37,7 +37,9 @@ public class MySQLGameDAO implements GameDAO{
     @Override
     public GameData createGame(GameData gameData) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement("INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)")) {
+             PreparedStatement statement =
+                     conn.prepareStatement("INSERT INTO games " +
+                             "(gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)")) {
             statement.setInt(1, gameData.gameID());
             statement.setString(2, gameData.whiteUsername());
             statement.setString(3, gameData.blackUsername());
@@ -97,7 +99,9 @@ public class MySQLGameDAO implements GameDAO{
     @Override
     public void updateGame(int gameID, GameData updatedGameData) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement statement = conn.prepareStatement("UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
+             PreparedStatement statement =
+                     conn.prepareStatement("UPDATE games " +
+                             "SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
             statement.setString(1, updatedGameData.whiteUsername());
             statement.setString(2, updatedGameData.blackUsername());
             statement.setString(3, updatedGameData.gameName());
