@@ -21,7 +21,7 @@ public class WebSocketFacade extends Endpoint {
 
     public WebSocketFacade(String url, GameHandler gameHandler) {
         try {
-            URI uri = new URI(url.replace("http", "ws") + "/connect");
+            URI uri = new URI(url.replace("http", "ws") + "/ws");
             this.gameHandler = gameHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -52,19 +52,10 @@ public class WebSocketFacade extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig){
     }
+
     public void connectPlayer(String authToken, int gameID, ChessGame.TeamColor teamColor) {
         ConnectCommand connectCommand = new ConnectCommand(gameID, teamColor, authToken);
         sendMessage(connectCommand);
-    }
-
-    public void joinPlayer(String authToken, int gameID, ChessGame.TeamColor teamColor) {
-        JoinPlayerCommand joinPlayerCommand = new JoinPlayerCommand(gameID, teamColor, authToken);
-        sendMessage(joinPlayerCommand);
-    }
-
-    public void joinObserver(int gameID, String authToken) {
-        JoinObserverCommand joinObserverCommand = new JoinObserverCommand(gameID, authToken);
-        sendMessage(joinObserverCommand);
     }
 
     public void makeMove (int gameID, ChessMove move, String authToken) {

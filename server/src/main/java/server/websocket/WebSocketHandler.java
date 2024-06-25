@@ -42,22 +42,6 @@ public class WebSocketHandler {
                     e.printStackTrace();
                 }
                 break;
-            case JOIN_PLAYER:
-                JoinPlayerCommand joinPlayerCommand = gson.fromJson(message, JoinPlayerCommand.class);
-                try {
-                    gameService.joinPlayer(gameCommand.getAuthString(), joinPlayerCommand, session);
-                } catch (DataAccessException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case JOIN_OBSERVER:
-                JoinObserverCommand joinObserverCommand = gson.fromJson(message, JoinObserverCommand.class);
-                try {
-                    gameService.joinObserver(gameCommand.getAuthString(), joinObserverCommand, session);
-                } catch (DataAccessException e) {
-                    e.printStackTrace();
-                }
-                break;
             case MAKE_MOVE:
                 MakeMoveCommand makeMoveCommand = gson.fromJson(message, MakeMoveCommand.class);
                 try {

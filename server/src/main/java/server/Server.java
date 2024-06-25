@@ -30,7 +30,7 @@ public class Server {
         }
 
         WebSocketHandler webSocketHandler = new WebSocketHandler(new GameService(gameDAO, authDAO, userDAO));
-        Spark.webSocket("/connect", webSocketHandler);
+        Spark.webSocket("/ws", webSocketHandler);
 
         RegisterHandler registerHandler = new RegisterHandler(new RegisterService(userDAO, authDAO));
         Spark.post("/user", registerHandler::register);

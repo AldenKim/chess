@@ -64,69 +64,6 @@ public class GameService {
         webSocketSessions.broadcastMessage(gameID, notification, authToken);
     }
 
-    public void joinPlayer(String authToken, JoinPlayerCommand joinPlayerCommand, Session session) throws DataAccessException {
-        try {
-            webSocketSessions.addSessionToGame(joinPlayerCommand.getGameID(), joinPlayerCommand.getAuthString(), session);
-
-            if(!isValidAuthToken(authToken)) {
-                webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
-                return;
-            }
-
-            int gameID = joinPlayerCommand.getGameID();
-            if(gameDAO.getGame(gameID) == null) {
-                webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
-                return;
-            }
-            ChessGame game = gameDAO.getGame(gameID).game();
-            ChessGame.TeamColor playerColor = joinPlayerCommand.getPlayerColor();
-            LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
-
-            String userName = playerColor == ChessGame.TeamColor.WHITE ? gameDAO.getGame(gameID).whiteUsername() : gameDAO.getGame(gameID).blackUsername();
-            if(!Objects.equals(userName, authDAO.getAuth(authToken).username())) {
-                webSocketSessions.sendMessage(joinPlayerCommand.getGameID(), new ErrorMessage("Error joining game: Wrong Color"), authToken);
-                return;
-            }
-
-            String color = playerColor == ChessGame.TeamColor.WHITE ? "White" : "Black";
-
-            NotificationMessage notification = new NotificationMessage(userName + " joined as color " + color);
-
-            webSocketSessions.sendMessage(gameID, notificationToRootClient, authToken);
-            webSocketSessions.broadcastMessage(gameID, notification, authToken);
-        } catch (DataAccessException e){
-            throw e;
-        }
-    }
-
-    public void joinObserver(String authToken, JoinObserverCommand joinObserverCommand, Session session) throws DataAccessException {
-        try {
-            webSocketSessions.addSessionToGame(joinObserverCommand.getGameID(), joinObserverCommand.getAuthString(), session);
-
-            if(!isValidAuthToken(authToken)) {
-                webSocketSessions.sendMessage(joinObserverCommand.getGameID(), new ErrorMessage("Error joining: Unauthorized"), authToken);
-                return;
-            }
-
-            int gameID = joinObserverCommand.getGameID();
-            if(gameDAO.getGame(gameID) == null) {
-                webSocketSessions.sendMessage(joinObserverCommand.getGameID(), new ErrorMessage("Error joining game: Unauthorized"), authToken);
-                return;
-            }
-            ChessGame game = gameDAO.getGame(gameID).game();
-            LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
-
-            String userName = authDAO.getAuth(authToken).username();
-
-            NotificationMessage notification = new NotificationMessage(userName + " joined as observer.");
-
-            webSocketSessions.sendMessage(gameID, notificationToRootClient, authToken);
-            webSocketSessions.broadcastMessage(gameID, notification, authToken);
-        } catch (DataAccessException e) {
-            throw e;
-        }
-    }
-
     public void makeMove(String authToken, MakeMoveCommand makeMoveCommand, Session session) throws DataAccessException {
         try {
             webSocketSessions.addSessionToGame(makeMoveCommand.getGameID(), makeMoveCommand.getAuthString(), session);
@@ -156,7 +93,7 @@ public class GameService {
                 return;
             }
 
-            if(game.isInCheck(ChessGame.TeamColor.BLACK) || game.isInCheck(ChessGame.TeamColor.WHITE)) {
+            if(game.isInCheck(ChessGame.TeamColor.BLACK) && !game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheck(ChessGame.TeamColor.WHITE) && !game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                 webSocketSessions.sendMessage(gameID, new NotificationMessage("Check!"), authToken);
                 webSocketSessions.broadcastMessage(gameID, new NotificationMessage("Check!"), authToken);
                 gameDAO.updateGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(),gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
@@ -165,6 +102,8 @@ public class GameService {
             if(game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                 webSocketSessions.sendMessage(gameID, new NotificationMessage("Checkmate!"), authToken);
                 webSocketSessions.broadcastMessage(gameID, new NotificationMessage("Checkmate!"), authToken);
+                NotificationMessage notification = new NotificationMessage(userName + " moved to " + positionToString(makeMoveCommand.getMove().getEndPosition()));
+                webSocketSessions.broadcastMessage(gameID, notification, authToken);
                 game.setTeamTurn(null);
                 LoadGameMessage finalGame = new LoadGameMessage(game);
                 webSocketSessions.sendMessage(gameID, finalGame, authToken);
