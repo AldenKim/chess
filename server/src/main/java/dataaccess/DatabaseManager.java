@@ -19,7 +19,7 @@ public class DatabaseManager {
                 Properties props = new Properties();
                 props.load(propStream);
                 DATABASE_NAME = props.getProperty("db.name");
-                USER = props.getProperty("db.USER");
+                USER = props.getProperty("db.user");
                 PASSWORD = props.getProperty("db.password");
 
                 var host = props.getProperty("db.host");
