@@ -31,8 +31,8 @@ public class GameDAODatabaseTests {
 
     @Test
     public void positiveClearTest() throws DataAccessException {
-        GameData game1 = new GameData(1, "P1", "P2", "G1", null);
-        GameData game2 = new GameData(2, "P3", "P4", "G2", null);
+        GameData game1 = new GameData(1, "P1", "P2", "G1", new ChessGame());
+        GameData game2 = new GameData(2, "P3", "P4", "G2", new ChessGame());
 
         gameDAO.createGame(game1);
         gameDAO.createGame(game2);
@@ -46,7 +46,7 @@ public class GameDAODatabaseTests {
 
     @Test
     public void positiveCreateGameTest() throws DataAccessException {
-        GameData gameData = new GameData(1, "Player1", "Player2", "Game 1", null);
+        GameData gameData = new GameData(1, "Player1", "Player2", "Game 1", new ChessGame());
 
         gameDAO.createGame(gameData);
 
@@ -60,11 +60,11 @@ public class GameDAODatabaseTests {
 
     @Test
     public void negativeCreateGameTest() throws DataAccessException {
-        GameData gameData1 = new GameData(1, "Player1", "Player2", "Game 1", null);
+        GameData gameData1 = new GameData(1, "Player1", "Player2", "Game 1", new ChessGame());
 
         gameDAO.createGame(gameData1);
 
-        GameData gameData2 = new GameData(1, "Player3", "Player4", "Game 2", null);
+        GameData gameData2 = new GameData(1, "Player3", "Player4", "Game 2", new ChessGame());
         assertThrows(DataAccessException.class, () -> gameDAO.createGame(gameData2));
     }
 
