@@ -41,11 +41,7 @@ public class GameUI implements GameHandler{
         System.out.println("5. Resign");
         System.out.println("6. Highlight Legal Moves");
         ws.connectPlayer(authToken, gameID, teamColor);
-        /*if(teamColor == null) {
-            ws.joinObserver(gameID, authToken);
-        } else {
-            ws.joinPlayer(authToken, gameID, teamColor);
-        }*/
+
         while (running) {
             System.out.print(IN_GAME_PREFIX);
             String userInput = scanner.nextLine().toLowerCase();

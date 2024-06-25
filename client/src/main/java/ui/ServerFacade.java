@@ -182,17 +182,7 @@ public class ServerFacade {
                         gameNumberToIdMap.put(gameNumbered, gameID);
                         System.out.print("Game #: " + gameNumbered + ", Game Name: " + gameName);
                         System.out.print(", Players: ");
-                        if(whiteUsername == null) {
-                            System.out.print("White Player is Empty, ");
-                        } else {
-                            System.out.print(whiteUsername + ", ");
-                        }
-
-                        if(blackUsername == null) {
-                            System.out.println("Black Player is Empty");
-                        } else {
-                            System.out.println(blackUsername);
-                        }
+                        helperForList(whiteUsername, blackUsername);
                         gameNumbered++;
                     }
                 } else {
@@ -204,6 +194,20 @@ public class ServerFacade {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void helperForList (String whiteUsername, String blackUsername){
+        if(whiteUsername == null) {
+            System.out.print("White Player is Empty, ");
+        } else {
+            System.out.print(whiteUsername + ", ");
+        }
+
+        if(blackUsername == null) {
+            System.out.println("Black Player is Empty");
+        } else {
+            System.out.println(blackUsername);
         }
     }
 

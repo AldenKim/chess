@@ -162,14 +162,16 @@ public class ChessGame {
             chessBoard.addPiece(new ChessPosition(start.getRow(), end.getColumn()+1), rook);
             chessBoard.removePiece(new ChessPosition(start.getRow(), 1), rook);
         }
-        else if (piece.getPieceType() == ChessPiece.PieceType.KING && (start.getColumn() - end.getColumn() == -2) && (start.getRow() == end.getRow())){
+        else if (piece.getPieceType() == ChessPiece.PieceType.KING &&
+                (start.getColumn() - end.getColumn() == -2) && (start.getRow() == end.getRow())){
             chessBoard.addPiece(end, piece);
             chessBoard.removePiece(start, piece);
             ChessPiece rook = chessBoard.getPiece(new ChessPosition(start.getRow(), 8));
             chessBoard.addPiece(new ChessPosition(start.getRow(), start.getColumn()+1), rook);
             chessBoard.removePiece(new ChessPosition(start.getRow(), 8), rook);
         }
-        else if(piece.getPieceType() == ChessPiece.PieceType.PAWN && Math.abs(start.getColumn() - end.getColumn()) == 1 && chessBoard.getPiece(end) == null)
+        else if(piece.getPieceType() == ChessPiece.PieceType.PAWN &&
+                Math.abs(start.getColumn() - end.getColumn()) == 1 && chessBoard.getPiece(end) == null)
         {
             chessBoard.addPiece(end, piece);
             chessBoard.removePiece(start, piece);
@@ -180,7 +182,10 @@ public class ChessGame {
             chessBoard.addPiece(end, piece);
             chessBoard.removePiece(start, piece);
         }
-        else if (move.getPromotionPiece() == ChessPiece.PieceType.QUEEN || move.getPromotionPiece() == ChessPiece.PieceType.KNIGHT || move.getPromotionPiece() == ChessPiece.PieceType. BISHOP|| move.getPromotionPiece() == ChessPiece.PieceType.ROOK)
+        else if (move.getPromotionPiece() == ChessPiece.PieceType.QUEEN
+                || move.getPromotionPiece() == ChessPiece.PieceType.KNIGHT
+                || move.getPromotionPiece() == ChessPiece.PieceType. BISHOP
+                || move.getPromotionPiece() == ChessPiece.PieceType.ROOK)
         {
             chessBoard.addPiece(end, new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
             chessBoard.removePiece(start, piece);
@@ -213,7 +218,8 @@ public class ChessGame {
                 if(getPiece != null && getPiece.getTeamColor() != teamColor)
                 {
                     Collection<ChessMove> getMoves = getPiece.pieceMoves(chessBoard, new ChessPosition(row, col));
-                    if(getMoves != null && (getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, null)) || getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, ChessPiece.PieceType.QUEEN))))
+                    if(getMoves != null && (getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, null))
+                            || getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, ChessPiece.PieceType.QUEEN))))
                     {
                         return true;
                     }
@@ -320,7 +326,8 @@ public class ChessGame {
 
 
         int rookCol = 8;
-        if(chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)) == null || chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)).hasMoved())
+        if(chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)) == null
+                || chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)).hasMoved())
         {
             return false;
         }
@@ -358,7 +365,8 @@ public class ChessGame {
         }
 
         int rookCol = 1;
-        if(chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)) == null || chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)).hasMoved())
+        if(chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)) == null
+                || chessBoard.getPiece(new ChessPosition(kingPos.getRow(),rookCol)).hasMoved())
         {
             return false;
         }
