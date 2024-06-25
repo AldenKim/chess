@@ -1,4 +1,4 @@
-package webSocketMessages.serverMessages;
+package websocket.messages;
 
 public class LoadGameMessage extends ServerMessage{
     private Object game;

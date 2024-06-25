@@ -2,8 +2,8 @@ package ui;
 
 import chess.*;
 import com.google.gson.Gson;
-import webSocketMessages.serverMessages.LoadGameMessage;
-import webSocketMessages.serverMessages.NotificationMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
 import java.util.Collection;

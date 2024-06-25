@@ -1,8 +1,7 @@
 package ui;
 
-import chess.ChessGame;
-import webSocketMessages.serverMessages.LoadGameMessage;
-import webSocketMessages.serverMessages.NotificationMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 public interface GameHandler {
     void updateGame(LoadGameMessage game);

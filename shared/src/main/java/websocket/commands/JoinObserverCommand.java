@@ -1,4 +1,4 @@
-package webSocketMessages.userCommands;
+package websocket.commands;
 
 public class JoinObserverCommand extends UserGameCommand{
     private int gameID;

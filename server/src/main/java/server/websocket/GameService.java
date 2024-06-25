@@ -4,10 +4,10 @@ import chess.*;
 import dataAccess.*;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
-import webSocketMessages.serverMessages.ErrorMessage;
-import webSocketMessages.serverMessages.LoadGameMessage;
-import webSocketMessages.serverMessages.NotificationMessage;
-import webSocketMessages.userCommands.*;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.commands.*;
 
 import java.util.Objects;
 

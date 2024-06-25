@@ -1,4 +1,4 @@
-package webSocketMessages.serverMessages;
+package websocket.messages;
 
 public class ErrorMessage extends ServerMessage{
     private String errorMessage;
