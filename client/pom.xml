@@ -42,9 +42,9 @@
                                     </mainClass>
                                 </manifest>
                             </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
+                            <descriptors>
+                                <descriptor>../test-dependencies-assembly.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
@@ -56,6 +56,12 @@
         <dependency>
             <groupId>edu.byu.cs240</groupId>
             <artifactId>shared</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.byu.cs240</groupId>
+            <artifactId>server</artifactId>
+            <scope>test</scope>
             <version>1.0.0</version>
         </dependency>
         <dependency>
