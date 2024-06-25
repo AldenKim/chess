@@ -25,8 +25,7 @@ public class LoginService {
             var user = userDAO.getUser(request.username());
 
             if(userDAO instanceof MySQLUserDAO) {
-                var hashedPassword = userDAO.getUser(request.username()).password();
-                if(user == null || !BCrypt.checkpw(user.password(), hashedPassword)) {
+                if(user == null || !BCrypt.checkpw(request.password(), userDAO.getUser(request.username()).password())) {
                     return new LoginResult(null, null, "Error: Invalid username or password");
                 }
             } else {
