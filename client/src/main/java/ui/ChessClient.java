@@ -182,7 +182,13 @@ public class ChessClient {
 
     private static void joinGame(String authToken) {
         System.out.println("Enter Game Number: ");
-        int gameNum = Integer.parseInt(SCANNER.nextLine());
+        int gameNum = 0;
+        try {
+            gameNum = Integer.parseInt(SCANNER.nextLine());
+        } catch (Exception e) {
+            System.out.println("Invalid input, Please try again.");
+            return;
+        }
         System.out.println("Do you want to play as white or black?: ");
         String userColor = SCANNER.nextLine();
 
